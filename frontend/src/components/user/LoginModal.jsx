@@ -1,7 +1,8 @@
-import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material'
+import { Box, Button, Fade, InputAdornment, Modal, TextField, Typography } from '@mui/material'
 import axios from 'axios';
 import React from 'react'
-import { Link } from 'react-router-dom'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
 import { authenticate } from '../../utils/helpers';
 import { toast } from 'react-toastify';
 
@@ -55,19 +56,31 @@ const LoginModal = ({ open, onClose, signUp }) => {
                     </Typography>
                     <Box sx={styles.formContainer}>
                         <TextField
+                            placeholder='Enter Email'
                             label="Email"
                             variant="outlined"
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            slotProps={{
+                                input: {
+                                    startAdornment: <InputAdornment position="start"><EmailOutlinedIcon /></InputAdornment>,
+                                },
+                            }}
                         />
                         <TextField
+                            placeholder='Enter Password'
                             label="Password"
                             variant="outlined"
                             type="password"
                             name="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            slotProps={{
+                                input: {
+                                    startAdornment: <InputAdornment position="start"><HttpsOutlinedIcon /></InputAdornment>,
+                                },
+                            }}
                         />
                         <Button
                             type="submit"

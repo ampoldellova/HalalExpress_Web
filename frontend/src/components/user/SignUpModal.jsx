@@ -1,6 +1,9 @@
-import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material'
+import { Box, Button, Fade, InputAdornment, Modal, TextField, Typography } from '@mui/material'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
+import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -31,31 +34,57 @@ const SignUpModal = ({ open, onClose }) => {
                     </Typography>
                     <Box sx={styles.formContainer}>
                         <TextField
-                            label="Enter Username"
+                            placeholder='Enter Username'
+                            label="Username"
                             variant="outlined"
                             name="username"
+                            slotProps={{
+                                input: {
+                                    startAdornment: <InputAdornment position="start">
+                                        <PersonOutlineOutlinedIcon />
+                                    </InputAdornment>
+                                },
+                            }}
                         // value={email}
                         // onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
-                            label="Enter Email"
+                            placeholder='Enter Email'
+                            label="Email"
                             variant="outlined"
                             name="password"
+                            slotProps={{
+                                input: {
+                                    startAdornment: <InputAdornment position="start"><EmailOutlinedIcon /></InputAdornment>,
+                                },
+                            }}
                         // value={password}
                         // onChange={(e) => setPassword(e.target.value)}
                         />
                         <TextField
-                            label="Enter Phone Number"
+                            placeholder='Enter Phone Number'
+                            label="Phone Number"
                             variant="outlined"
                             name="password"
+                            slotProps={{
+                                input: {
+                                    startAdornment: <InputAdornment position="start"><LocalPhoneOutlinedIcon /></InputAdornment>,
+                                },
+                            }}
                         // value={password}
                         // onChange={(e) => setPassword(e.target.value)}
                         />
                         <TextField
-                            label="Enter Password"
+                            placeholder='Enter Password'
+                            label="Password"
                             variant="outlined"
                             name="password"
                             type='password'
+                            slotProps={{
+                                input: {
+                                    startAdornment: <InputAdornment position="start"><HttpsOutlinedIcon /></InputAdornment>,
+                                },
+                            }}
                         // value={password}
                         // onChange={(e) => setPassword(e.target.value)}
                         />
