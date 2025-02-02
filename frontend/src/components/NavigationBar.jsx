@@ -9,10 +9,10 @@ import logo from '../assets/images/icon.png';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Container, Fade, Grid2, Link, Menu, MenuItem, Modal, TextField } from '@mui/material';
-import { authenticate, getToken, getUser, logout } from '../utils/helpers';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { Container, Grid2, Menu, MenuItem } from '@mui/material';
+import { getToken, getUser, logout } from '../utils/helpers';
+import SignUpModal from './user/SignUpModal';
+import LoginModal from './user/LoginModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -31,16 +31,17 @@ const COLORS = {
 };
 
 export default function NavigationBar() {
-    const [open, setOpen] = React.useState(false);
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const [openLogin, setOpenLogin] = React.useState(false);
+    const [openSignUp, setOpenSignUp] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const token = getToken();
     const user = getUser();
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleOpenLogin = () => setOpenLogin(true);
+    const handleCloseLogin = () => setOpenLogin(false);
+    const handleOpenSignUp = () => setOpenSignUp(true);
+    const handleCloseSignUp = () => setOpenSignUp(false);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -50,28 +51,9 @@ export default function NavigationBar() {
         setAnchorElUser(null);
     };
 
-
-    const loginUser = async () => {
-        try {
-            const { data } = await axios.post(`http://localhost:6002/login`, { email, password });
-
-            console.log(data);
-            authenticate(data, () => { });
-            handleClose();
-
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     const handleLogout = async () => {
         logout(() => { });
         window.location.reload();
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        loginUser();
     };
 
     return (
@@ -127,8 +109,8 @@ export default function NavigationBar() {
                         ) : (
                             <>
                                 <Grid2 container spacing={4}>
-                                    <Button onClick={handleOpen} variant="outlined" sx={styles.loginBtn}>Log in</Button>
-                                    <Button onClick={handleOpen} variant="contained" sx={styles.signUpBtn}>Sign Up</Button>
+                                    <Button onClick={handleOpenLogin} variant="outlined" sx={styles.loginBtn}>Log in</Button>
+                                    <Button onClick={handleOpenSignUp} variant="contained" sx={styles.signUpBtn}>Sign Up</Button>
                                     <IconButton color="inherit" onClick={() => { }}>
                                         <LocalMallOutlinedIcon sx={styles.cartIcon} />
                                     </IconButton>
@@ -139,56 +121,16 @@ export default function NavigationBar() {
                 </Container>
             </AppBar>
 
-            <Modal open={open} onClose={handleClose}>
-                <Fade in={open}>
-                    <Box sx={styles.modal} component="form" onSubmit={handleSubmit}>
-                        <Typography sx={styles.welcomeText}>
-                            Welcome!
-                        </Typography>
-                        <Typography sx={styles.welcomeSubText}>
-                            Sign up or log in to continue
-                        </Typography>
-                        <Box sx={styles.formContainer}>
-                            <TextField
-                                id="outlined-email"
-                                label="Email"
-                                variant="outlined"
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <TextField
-                                id="outlined-password"
-                                label="Password"
-                                variant="outlined"
-                                type="password"
-                                name="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <Button type="submit" variant="contained" sx={{ backgroundColor: COLORS.primary, textTransform: 'none', fontFamily: 'bold' }}>L O G I N</Button>
-                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, textAlign: 'center', fontSize: 14 }}>
-                                Don't have an account? <Link component='href' href="/register" sx={{ color: COLORS.primary, textTransform: 'none', fontFamily: 'inherit' }}>Sign up</Link>
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Fade>
-            </Modal>
+            {/* Login Modal */}
+            <LoginModal open={openLogin} onClose={handleCloseLogin} signUp={handleOpenSignUp} />
+
+            {/* SignUp Modal */}
+            <SignUpModal open={openSignUp} onClose={handleCloseSignUp} />
         </Box>
     );
 }
 
 const styles = {
-    modal: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        bgcolor: 'background.paper',
-        borderRadius: 5,
-        width: 400,
-        p: 4,
-    },
     cartIcon: {
         color: COLORS.gray,
     },
@@ -203,7 +145,8 @@ const styles = {
     menuItemText: {
         textAlign: 'left',
         fontFamily: 'regular',
-        color: COLORS.gray
+        color: COLORS.gray,
+        ml: 1
     },
     loginBtn: {
         borderColor: COLORS.gray,
@@ -217,23 +160,5 @@ const styles = {
         textTransform: 'none',
         fontFamily: 'regular',
         backgroundColor: COLORS.primary
-    },
-    welcomeText: {
-        fontFamily: 'bold',
-        color: COLORS.black,
-        textAlign: 'left',
-        fontSize: 24
-    },
-    welcomeSubText: {
-        fontFamily: 'regular',
-        color: COLORS.gray,
-        textAlign: 'left',
-        fontSize: 14
-    },
-    formContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        mt: 2
-    },
+    }
 };
