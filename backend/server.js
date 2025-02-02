@@ -1,3 +1,4 @@
+const cors = require('cors')
 const express = require('express')
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
@@ -27,6 +28,7 @@ admin.initializeApp({
 
 mongoose.connect(process.env.MONGO_URL).then(() => console.log('Database Connected')).catch((err) => console.log(err))
 
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
