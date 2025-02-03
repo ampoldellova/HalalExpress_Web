@@ -1,9 +1,10 @@
-import { Box, Button, Grid2, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, Divider, Grid2, InputAdornment, TextField, Typography } from '@mui/material';
 import React from 'react'
 import Lottie from "lottie-react";
 import vegetables from "../assets/anime/vegetables.json";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Restaurants from '../components/Vendors/Restaurants';
+import Foods from '../components/Foods/Foods';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -66,8 +67,11 @@ const HomePage = () => {
                     </Box>
                 </Grid2>
             </Box >
-            <Restaurants />
-            <Foods />
+            <Container maxWidth="lg">
+                <Restaurants />
+                <Divider sx={{ mt: 5 }} />
+                <Foods />
+            </Container>
         </>
     )
 }

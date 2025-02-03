@@ -37,7 +37,7 @@ const Restaurants = () => {
     }, []);
 
     return (
-        <Container maxWidth="lg" sx={{ my: 5 }}>
+        <>
             <Grid2 container sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 5 }}>
                 <Typography sx={{ color: COLORS.black, fontSize: 24, fontFamily: 'bold' }}>
                     Restaurants
@@ -57,7 +57,7 @@ const Restaurants = () => {
                                 <Grid2 container sx={{ alignItems: 'center' }}>
                                     <Box component="img" src={restaurant.logoUrl.url} sx={{ height: 30, width: 30, borderRadius: 2 }} />
                                     <Box >
-                                        <Typography gutterBottom sx={{ fontFamily: 'medium', fontSize: 18, ml: 1, mt: 1 }}>
+                                        <Typography sx={{ fontFamily: 'medium', fontSize: 18, ml: 1, mt: 1 }}>
                                             {restaurant.title}
                                         </Typography>
                                     </Box>
@@ -95,7 +95,7 @@ const Restaurants = () => {
                     </Grid2>
                 ))}
             </Grid2>
-        </Container>
+        </>
     )
 }
 

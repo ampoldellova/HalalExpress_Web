@@ -27,3 +27,11 @@
   font-family: 'extraBold';
   src: url('./assets/fonts/Poppins-ExtraBold.ttf') format('truetype');
 }
+
+.foods-container {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.foods-container-exit {
+  opacity: 0;
+}
