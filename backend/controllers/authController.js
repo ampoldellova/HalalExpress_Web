@@ -7,6 +7,7 @@ const fs = require('fs')
 
 module.exports = {
     createUser: async (req, res) => {
+        console.log(req.body);
         const user = req.body;
         try {
             await admin.auth().getUserByEmail(user.email);
@@ -24,8 +25,6 @@ module.exports = {
                         disabled: false
                     })
 
-                    // console.log(userResponse.uid);
-
                     const newUser = new User({
                         username: user.username,
                         email: user.email,
@@ -42,6 +41,7 @@ module.exports = {
 
                     res.status(201).json({ status: true })
                 } catch (error) {
+                    console.log(error);
                     if (req.file) fs.unlinkSync(req.file.path);
                     res.status(500).json({ status: false, error: "Error on creating user" })
                 }

@@ -1,9 +1,11 @@
-import { Box, Button, Fade, InputAdornment, Modal, TextField, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Button, Fade, InputAdornment, Modal, TextField, Typography } from '@mui/material';
+import React from 'react';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -22,57 +24,92 @@ const COLORS = {
 };
 
 const SignUpModal = ({ open, onClose }) => {
+    const [username, setUsername] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [phone, setPhone] = React.useState('');
+    const [password, setPassword] = React.useState('');
+
+    const signUpUser = async () => {
+        try {
+
+            const response = await axios.post(`http://localhost:6002/register`, { username, email, phone, password });
+
+            if (response.data.status) {
+                onClose();
+                toast.success("Registered successfully!");
+            } else {
+                toast.error(response.data.message || "Registration failed. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error during sign-up:", error.response ? error.response.data : error.message);
+            toast.error("Registration failed. Please try again.");
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        signUpUser();
+    };
+
     return (
         <Modal open={open} onClose={onClose}>
             <Fade in={open}>
-                <Box sx={styles.modal} component="form" onSubmit={() => { }}>
+                <Box sx={styles.modal}>
                     <Typography sx={styles.signUpText}>
                         Sign Up!
                     </Typography>
                     <Typography sx={styles.signUpSubText}>
                         Register your details to get started
                     </Typography>
-                    <Box sx={styles.formContainer}>
+
+                    <Box sx={styles.formContainer} component='form' onSubmit={handleSubmit}>
                         <TextField
                             placeholder='Enter Username'
                             label="Username"
                             variant="outlined"
                             name="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             slotProps={{
                                 input: {
-                                    startAdornment: <InputAdornment position="start">
-                                        <PersonOutlineOutlinedIcon />
-                                    </InputAdornment>
+                                    startAdornment:
+                                        <InputAdornment position="start">
+                                            <PersonOutlineOutlinedIcon />
+                                        </InputAdornment>
                                 },
                             }}
-                        // value={email}
-                        // onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
                             placeholder='Enter Email'
                             label="Email"
                             variant="outlined"
-                            name="password"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             slotProps={{
                                 input: {
-                                    startAdornment: <InputAdornment position="start"><EmailOutlinedIcon /></InputAdornment>,
+                                    startAdornment:
+                                        <InputAdornment position="start">
+                                            <EmailOutlinedIcon />
+                                        </InputAdornment>,
                                 },
                             }}
-                        // value={password}
-                        // onChange={(e) => setPassword(e.target.value)}
                         />
                         <TextField
                             placeholder='Enter Phone Number'
                             label="Phone Number"
                             variant="outlined"
-                            name="password"
+                            name="phone"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             slotProps={{
                                 input: {
-                                    startAdornment: <InputAdornment position="start"><LocalPhoneOutlinedIcon /></InputAdornment>,
+                                    startAdornment:
+                                        <InputAdornment position="start">
+                                            <LocalPhoneOutlinedIcon />
+                                        </InputAdornment>,
                                 },
                             }}
-                        // value={password}
-                        // onChange={(e) => setPassword(e.target.value)}
                         />
                         <TextField
                             placeholder='Enter Password'
@@ -80,17 +117,21 @@ const SignUpModal = ({ open, onClose }) => {
                             variant="outlined"
                             name="password"
                             type='password'
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             slotProps={{
                                 input: {
-                                    startAdornment: <InputAdornment position="start"><HttpsOutlinedIcon /></InputAdornment>,
+                                    startAdornment:
+                                        <InputAdornment position="start">
+                                            <HttpsOutlinedIcon />
+                                        </InputAdornment>,
                                 },
                             }}
-                        // value={password}
-                        // onChange={(e) => setPassword(e.target.value)}
                         />
-                        <Button type="submit" variant="contained" sx={styles.modalLoginBtn}>S U B M I T</Button>
 
+                        <Button type="submit" variant="contained" sx={styles.modalLoginBtn} >S U B M I T</Button>
                     </Box>
+
                 </Box>
             </Fade>
         </Modal>
