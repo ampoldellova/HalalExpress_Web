@@ -51,7 +51,7 @@ const Restaurants = () => {
                         <Card sx={{ maxWidth: 365, boxShadow: 'none', cursor: 'pointer' }}>
                             <CardActionArea onClick={() => { }}>
                                 <CardMedia
-                                    sx={{ height: 140, borderRadius: 5, width: 365 }}
+                                    sx={{ height: 140, borderRadius: 5, width: 365, objectFit: 'cover' }}
                                     image={restaurant.imageUrl.url}
                                 />
                                 <Grid2 container sx={{ alignItems: 'center' }}>
@@ -61,7 +61,7 @@ const Restaurants = () => {
                                             {restaurant.title}
                                         </Typography>
                                     </Box>
-                                    <Box sx={{ ml: 'auto', borderRadius: 3, bgcolor: restaurant.isAvailable ? COLORS.green : COLORS.red, p: 0.5 }}>
+                                    <Box sx={{ ml: 'auto', borderRadius: 3, bgcolor: restaurant.isAvailable ? COLORS.primary : COLORS.red, p: 0.5 }}>
                                         <Typography sx={{ color: COLORS.white, fontFamily: 'regular', fontSize: 12 }}>
                                             {restaurant.isAvailable ? 'Open' : 'Closed'}
                                         </Typography>
