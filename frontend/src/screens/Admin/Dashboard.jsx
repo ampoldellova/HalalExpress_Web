@@ -19,6 +19,8 @@ import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import Charts from './Charts';
 import ManageUsers from './ManageUsers';
 import ManageProducts from './ManageProducts';
+import { getUser } from '../../utils/helpers';
+import { Grid2 } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -99,13 +101,16 @@ export default function Dashboard() {
     const [openCharts, setOpenCharts] = React.useState(true);
     const [openUsers, setOpenUsers] = React.useState(false);
     const [openProducts, setOpenProducts] = React.useState(false);
+    const user = getUser();
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <AppBar position="fixed" open={true} sx={{ backgroundColor: COLORS.white, boxShadow: 'none' }}>
                 <Toolbar>
-
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Box component="img" src={user.profile.url} sx={{ height: 40, width: 40, borderRadius: 99, mr: 1 }} />
+                    <Typography sx={styles.userName}>{user.username.split(' ').slice(0, 2).join(' ')}</Typography>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -171,10 +176,21 @@ export default function Dashboard() {
                 {openCharts && <Charts />}
                 {openUsers && <ManageUsers />}
                 {openProducts && <ManageProducts />}
-                {/* <Charts />
-                <ManageUsers />
-                <ManageProducts /> */}
             </Main>
         </Box>
     );
 }
+
+
+const styles = {
+    userIcon: {
+        color: COLORS.primary,
+        fontSize: 30
+    },
+    userName: {
+        color: COLORS.black,
+        fontFamily: 'bold',
+        fontSize: 16,
+        ml: 1
+    },
+};

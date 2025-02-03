@@ -1,55 +1,106 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import axios from 'axios';
+import { getToken } from '../../utils/helpers';
 
-const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-        field: 'firstName',
-        headerName: 'First name',
-        width: 150,
-        editable: true,
-    },
-    {
-        field: 'lastName',
-        headerName: 'Last name',
-        width: 150,
-        editable: true,
-    },
-    {
-        field: 'age',
-        headerName: 'Age',
-        type: 'number',
-        width: 110,
-        editable: true,
-    },
-    {
-        field: 'fullName',
-        headerName: 'Full name',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 160,
-        valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-    },
-];
 
-const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
 
-export default function ManageUsers() {
+const COLORS = {
+    primary: "#30b9b2",
+    primary1: "#00fff53c",
+    secondary: "#ffa44f",
+    secondary1: "#ffe5db",
+    tertiary: "#0078a6",
+    gray: "#83829A",
+    gray2: "#C1C0C8",
+    offwhite: "#F3F4F8",
+    white: "#FFFFFF",
+    black: "#000000",
+    red: "#e81e4d",
+    green: " #00C135",
+    lightWhite: "#FAFAFC",
+};
+
+const ManageUsers = () => {
+    const [users, setUsers] = React.useState([]);
+    const [userTypes, setUserTypes] = React.useState({});
+    const token = getToken();
+
+    const fetchUsers = async () => {
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const { data } = await axios.get(`http://localhost:6002/api/users/list`, config);
+
+            const formattedData = data.map((user, index) => ({
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                userType: user.userType,
+                createdAt: new Date(user.createdAt).toLocaleString(),
+            }));
+
+            setUsers(formattedData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    React.useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const handleChange = (event, id) => {
+        const newValue = event.target.value;
+        console.log(`User ID: ${id}, New User Type: ${newValue}`);
+        setUserTypes(prevState => ({
+            ...prevState,
+            [id]: newValue,
+        }));
+        // Add your custom logic here, e.g., update the user type in the backend
+    };
+
+    const columns = [
+        { field: 'id', headerName: 'ID', width: 300 },
+        { field: 'username', headerName: 'Username', width: 250 },
+        { field: 'email', headerName: 'Email', width: 250 },
+        { field: 'phone', headerName: 'Phone', width: 150 },
+        {
+            field: 'userType',
+            headerName: 'User Type',
+            width: 150,
+            renderCell: (params) => (
+                <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth variant='filled'>
+                        <Select
+                            value={userTypes[params.id] || params.row.userType}
+                            onChange={(event) => handleChange(event, params.id)}
+                        >
+                            <MenuItem value={'Client'}>Client</MenuItem>
+                            <MenuItem value={'Vendor'}>Vendor</MenuItem>
+                            <MenuItem value={'Supplier'}>Supplier</MenuItem>
+                            <MenuItem value={'Admin'}>Admin</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+            ),
+        },
+    ];
+
     return (
         <Box sx={{ height: 400, width: '100%' }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: COLORS.primary, fontFamily: 'bold', mt: 1, textAlign: 'center', mb: 2, fontSize: 24 }}>
+                Manage Users
+            </Typography>
             <DataGrid
-                rows={rows}
+                rows={users}
                 columns={columns}
                 initialState={{
                     pagination: {
@@ -65,3 +116,5 @@ export default function ManageUsers() {
         </Box>
     );
 }
+
+export default ManageUsers;

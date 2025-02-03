@@ -89,7 +89,7 @@ export default function NavigationBar() {
                                             : <ArrowDropDownOutlinedIcon sx={{ color: COLORS.black }} />
                                         }
                                     </Button>
-                                    <IconButton color="inherit" onClick={() => { }}>F
+                                    <IconButton color="inherit" onClick={() => { }}>
                                         <LocalMallOutlinedIcon sx={styles.cartIcon} />
                                     </IconButton>
                                 </Grid2>

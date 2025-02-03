@@ -31,9 +31,8 @@ const SignUpModal = ({ open, onClose }) => {
 
     const signUpUser = async () => {
         try {
-
             const response = await axios.post(`http://localhost:6002/register`, { username, email, phone, password });
-
+            console.log(response);
             if (response.data.status) {
                 onClose();
                 toast.success("Registered successfully!");

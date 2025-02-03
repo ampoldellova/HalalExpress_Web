@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { Typography } from '@mui/material';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -45,9 +46,28 @@ const rows = [
     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
 ];
 
-export default function ManageProducts() {
+const COLORS = {
+    primary: "#30b9b2",
+    primary1: "#00fff53c",
+    secondary: "#ffa44f",
+    secondary1: "#ffe5db",
+    tertiary: "#0078a6",
+    gray: "#83829A",
+    gray2: "#C1C0C8",
+    offwhite: "#F3F4F8",
+    white: "#FFFFFF",
+    black: "#000000",
+    red: "#e81e4d",
+    green: " #00C135",
+    lightWhite: "#FAFAFC",
+};
+
+const ManageProducts = () => {
     return (
         <Box sx={{ height: 400, width: '100%' }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: COLORS.primary, fontFamily: 'bold', mt: 1, textAlign: 'center', mb: 2, fontSize: 24 }}>
+                Manage Products
+            </Typography>
             <DataGrid
                 rows={rows}
                 columns={columns}
@@ -65,3 +85,5 @@ export default function ManageProducts() {
         </Box>
     );
 }
+
+export default ManageProducts;
