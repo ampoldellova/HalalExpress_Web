@@ -13,6 +13,9 @@ import { Container, Grid2, Menu, MenuItem } from '@mui/material';
 import { getToken, getUser, logout } from '../utils/helpers';
 import SignUpModal from './user/SignUpModal';
 import LoginModal from './user/LoginModal';
+import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
+import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
+import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -77,9 +80,13 @@ export default function NavigationBar() {
                                 <Grid2 container spacing={4}>
                                     <Button color="inherit" onClick={handleOpenUserMenu} sx={{ textTransform: 'none' }}>
                                         <Person2OutlinedIcon sx={styles.userIcon} />
-                                        <Typography sx={styles.userName}>John Paul</Typography>
+                                        <Typography sx={styles.userName}>{user.username.split(' ').slice(0, 2).join(' ')}</Typography>
+                                        {anchorElUser ?
+                                            <ArrowDropUpOutlinedIcon sx={{ color: COLORS.black }} />
+                                            : <ArrowDropDownOutlinedIcon sx={{ color: COLORS.black }} />
+                                        }
                                     </Button>
-                                    <IconButton color="inherit" onClick={() => { }}>
+                                    <IconButton color="inherit" onClick={() => { }}>F
                                         <LocalMallOutlinedIcon sx={styles.cartIcon} />
                                     </IconButton>
                                 </Grid2>
@@ -98,6 +105,14 @@ export default function NavigationBar() {
                                         horizontal: 'right',
                                     }}
                                 >
+                                    {user.userType === 'Admin' && (
+                                        <MenuItem onClick={() => { }}>
+                                            <SupervisorAccountOutlinedIcon sx={{ color: COLORS.gray }} />
+                                            <Typography sx={styles.menuItemText}>
+                                                Dashboard
+                                            </Typography>
+                                        </MenuItem>
+                                    )}
                                     <MenuItem onClick={handleLogout}>
                                         <LogoutIcon sx={{ color: COLORS.gray }} />
                                         <Typography sx={styles.menuItemText}>
@@ -135,12 +150,13 @@ const styles = {
         color: COLORS.gray,
     },
     userIcon: {
-        color: COLORS.primary,
+        color: COLORS.black,
         mr: 1
     },
     userName: {
-        color: COLORS.primary,
-        fontFamily: 'regular'
+        color: COLORS.black,
+        fontFamily: 'light',
+        mr: 0.5
     },
     menuItemText: {
         textAlign: 'left',
