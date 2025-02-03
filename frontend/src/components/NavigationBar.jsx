@@ -16,6 +16,7 @@ import LoginModal from './user/LoginModal';
 import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined';
+import { useNavigate } from 'react-router-dom';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -34,6 +35,7 @@ const COLORS = {
 };
 
 export default function NavigationBar() {
+    const navigate = useNavigate();
     const [openLogin, setOpenLogin] = React.useState(false);
     const [openSignUp, setOpenSignUp] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -69,10 +71,11 @@ export default function NavigationBar() {
                             edge="start"
                             color="inherit"
                             aria-label="menu"
+                            onClick={() => navigate('/')}
                         >
                             <Box component="img" src={logo} sx={{ height: 40, width: 40 }} />
                         </IconButton>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: COLORS.primary, fontFamily: 'bold' }}>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: COLORS.primary, fontFamily: 'bold', cursor: 'pointer' }} onClick={() => navigate('/')}>
                             HalalExpress
                         </Typography>
                         {token && user ? (
@@ -106,7 +109,7 @@ export default function NavigationBar() {
                                     }}
                                 >
                                     {user.userType === 'Admin' && (
-                                        <MenuItem onClick={() => { }}>
+                                        <MenuItem onClick={() => { navigate('/admin/dashboard'); handleCloseUserMenu(); }}>
                                             <SupervisorAccountOutlinedIcon sx={{ color: COLORS.gray }} />
                                             <Typography sx={styles.menuItemText}>
                                                 Dashboard
