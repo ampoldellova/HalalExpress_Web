@@ -3,7 +3,7 @@ import React from 'react'
 import Lottie from "lottie-react";
 import vegetables from "../assets/anime/vegetables.json";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import Restaurants from '../components/vendor/Restaurants';
+import Restaurants from '../components/Vendors/Restaurants';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -67,6 +67,7 @@ const HomePage = () => {
                 </Grid2>
             </Box >
             <Restaurants />
+            <Foods />
         </>
     )
 }
