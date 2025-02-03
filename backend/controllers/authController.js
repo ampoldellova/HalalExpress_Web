@@ -7,45 +7,43 @@ const fs = require('fs')
 
 module.exports = {
     createUser: async (req, res) => {
-        console.log(req.body);
         const user = req.body;
         try {
-            await admin.auth().getUserByEmail(user.email);
 
-            res.status(400).json({ message: "Email is already registered" })
+            try {
+
+                // const userResponse = await admin.auth().createUser({
+                //     email: user.email,
+                //     password: user.password,
+                //     phone: user.phone,
+                //     emailVerified: false,
+                //     disabled: false
+                // })
+
+                const newUser = new User({
+                    username: user.username,
+                    email: user.email,
+                    password: CryptoJS.AES.encrypt(
+                        user.password,
+                        process.env.SECRET
+                    ).toString(),
+                    phone: user.phone,
+                    // uid: userResponse.uid,
+                    userType: 'Client'
+                })
+
+                await newUser.save()
+
+                res.status(201).json({ status: true })
+            } catch (error) {
+                console.log(error);
+                if (req.file) fs.unlinkSync(req.file.path);
+                res.status(500).json({ status: false, error: "Error on creating user" })
+            }
 
         } catch (error) {
-            if (error.code === 'auth/user-not-found') {
-                try {
-                    const userResponse = await admin.auth().createUser({
-                        email: user.email,
-                        password: user.password,
-                        phone: user.phone,
-                        emailVerified: false,
-                        disabled: false
-                    })
-
-                    const newUser = new User({
-                        username: user.username,
-                        email: user.email,
-                        password: CryptoJS.AES.encrypt(
-                            user.password,
-                            process.env.SECRET
-                        ).toString(),
-                        phone: user.phone,
-                        uid: userResponse.uid,
-                        userType: 'Client'
-                    })
-
-                    await newUser.save()
-
-                    res.status(201).json({ status: true })
-                } catch (error) {
-                    console.log(error);
-                    if (req.file) fs.unlinkSync(req.file.path);
-                    res.status(500).json({ status: false, error: "Error on creating user" })
-                }
-            }
+            console.log(error);
+            res.status(500).json({ status: false, error: error.message })
         }
     },
 
