@@ -19,23 +19,7 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const Restaurants = () => {
-    const [restaurants, setRestaurants] = React.useState([]);
-
-    const getRestaurants = async () => {
-        try {
-            const response = await axios.get(`http://localhost:6002/api/restaurant/list`);
-            setRestaurants(response.data);
-            console.log(response.data)
-        } catch (error) {
-            console.log("Error fetching restaurants:", error);
-        }
-    };
-
-    useEffect(() => {
-        getRestaurants();
-    }, []);
-
+const Restaurants = ({ restaurants }) => {
     return (
         <>
             <Grid2 container sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 5 }}>

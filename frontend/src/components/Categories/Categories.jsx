@@ -18,8 +18,9 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const Categories = () => {
+const Categories = ({ setSelectedCategory, setSelectedSection, setSelectedValue }) => {
     const [categories, setCategories] = useState([]);
+    const [selected, setSelected] = useState(null)
 
     const getCategories = async () => {
         try {
@@ -34,6 +35,20 @@ const Categories = () => {
         getCategories();
     }, []);
 
+    const handleSelectedCategory = (item) => {
+        if (selected == item.value) {
+            setSelectedCategory(null);
+            setSelected(null);
+            setSelectedSection(null);
+            setSelectedValue(null);
+        } else {
+            setSelectedCategory(item._id);
+            setSelected(item.value);
+            setSelectedSection('category');
+            setSelectedValue(item.title);
+        }
+    }
+
     return (
         <>
             <Grid2 container spacing={3} sx={{ mt: 2, justifyContent: 'space-between', mt: 5, alignItems: 'center' }} >
@@ -41,11 +56,14 @@ const Categories = () => {
                     <Grid2 xs={12} sm={6} md={4} >
                         <Box
                             component="img"
+                            onClick={() => handleSelectedCategory(category)}
                             sx={{
                                 height: 60,
                                 width: 60,
                                 display: 'flex',
-                                margin: '0 auto'
+                                margin: '0 auto',
+                                borderColor: category.value == selected ? COLORS.secondary : 'transparent',
+                                cursor: 'pointer'
                             }}
                             src={category.imageUrl.url}
                         />

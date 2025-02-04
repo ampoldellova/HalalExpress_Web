@@ -19,8 +19,7 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const Foods = () => {
-    const [foods, setFoods] = useState([]);
+const Foods = ({foods}) => {
     const [page, setPage] = useState(1);
     const itemsPerPage = 6;
 
@@ -29,19 +28,6 @@ const Foods = () => {
     };
 
     const paginatedFoods = foods.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-    const getFoods = async () => {
-        try {
-            const response = await axios.get(`http://localhost:6002/api/foods/list`);
-            setFoods(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    useEffect(() => {
-        getFoods();
-    }, []);
 
     return (
         <>
