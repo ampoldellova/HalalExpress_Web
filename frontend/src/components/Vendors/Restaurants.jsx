@@ -2,6 +2,7 @@ import { Box, Card, CardActionArea, CardMedia, Container, Grid2, Rating, Typogra
 import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined';
 import React, { useEffect } from 'react'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -20,6 +21,7 @@ const COLORS = {
 };
 
 const Restaurants = ({ restaurants }) => {
+    const navigate = useNavigate();
     return (
         <>
             <Grid2 container sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 5 }}>
@@ -33,7 +35,7 @@ const Restaurants = ({ restaurants }) => {
                 {restaurants.map((restaurant) => (
                     <Grid2 xs={12} sm={6} md={4} >
                         <Card sx={{ maxWidth: 365, boxShadow: 'none', cursor: 'pointer' }}>
-                            <CardActionArea onClick={() => { }}>
+                            <CardActionArea onClick={() => navigate(`/restaurant/${restaurant._id}`, { state: { restaurant } })}>
                                 <CardMedia
                                     sx={{ height: 140, borderRadius: 5, width: 365, objectFit: 'cover' }}
                                     image={restaurant.imageUrl.url}
