@@ -5,6 +5,7 @@ import vegetables from "../assets/anime/vegetables.json";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Restaurants from '../components/Vendors/Restaurants';
 import Foods from '../components/Foods/Foods';
+import Categories from '../components/Categories/Categories';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -68,6 +69,7 @@ const HomePage = () => {
                 </Grid2>
             </Box >
             <Container maxWidth="lg">
+                <Categories />
                 <Restaurants />
                 <Divider sx={{ mt: 5 }} />
                 <Foods />

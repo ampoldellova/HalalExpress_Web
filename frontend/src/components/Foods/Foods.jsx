@@ -55,10 +55,10 @@ const Foods = () => {
             <Grid2 container spacing={3} sx={{ mt: 2, justifyContent: 'center', mb: 5 }} >
                 {paginatedFoods.map((food) => (
                     <Grid2 xs={12} sm={6} md={4} >
-                        <Card sx={{ maxWidth: 165, boxShadow: 'none', cursor: 'pointer' }}>
+                        <Card sx={{ maxWidth: 170, boxShadow: 'none', cursor: 'pointer' }}>
                             <CardActionArea onClick={() => { }}>
                                 <CardMedia
-                                    sx={{ height: 165, borderRadius: 5, width: 165, objectFit: 'cover' }}
+                                    sx={{ height: 170, borderRadius: 5, width: 170, objectFit: 'cover' }}
                                     image={food.imageUrl.url}
                                 />
                                 <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 1 }}>
