@@ -23,7 +23,7 @@ function App() {
           <Route path="/restaurant/:id" element={<RestaurantPage />} />
         </Routes>
       </Router>
-      <ToastContainer position='top-center' />
+      <ToastContainer position='bottom-right' />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import DeliveryDiningOutlinedIcon from '@mui/icons-material/DeliveryDiningOutlin
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import RestaurantInfoModal from '../../components/Vendors/RestaurantInfoModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -24,8 +25,12 @@ const COLORS = {
 };
 
 const RestaurantPage = () => {
+    const [openInfo, setOpenInfo] = useState(false);
     const [restaurant, setRestaurant] = useState({});
     const restaurantId = useParams();
+
+    const handleOpenInfo = () => setOpenInfo(true);
+    const handleCloseInfo = () => setOpenInfo(false);
 
     const getRestaurant = async () => {
         try {
@@ -39,6 +44,7 @@ const RestaurantPage = () => {
     useEffect(() => {
         getRestaurant();
     }, []);
+    
     return (
         <Container maxWidth="lg" sx={{ height: '100vh', bgColor: COLORS.offwhite, justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
             <Box component='img' src={restaurant?.imageUrl?.url} sx={{ height: 400, width: '100%', objectFit: 'cover', borderBottomLeftRadius: 15, borderBottomRightRadius: 15 }} />
@@ -51,7 +57,7 @@ const RestaurantPage = () => {
                             <Typography sx={{ fontFamily: 'bold', color: COLORS.black, fontSize: 34 }}>
                                 {restaurant?.title}
                             </Typography>
-                            <Button variant="outlined" startIcon={<InfoOutlinedIcon />} color={COLORS.primary} sx={{ textTransform: 'none', fontFamily: 'regular', fontSize: 14, borderRadius: 3, ml: 'auto' }}>
+                            <Button onClick={handleOpenInfo} variant="outlined" startIcon={<InfoOutlinedIcon />} color={COLORS.primary} sx={{ textTransform: 'none', fontFamily: 'regular', fontSize: 14, borderRadius: 3, ml: 'auto' }}>
                                 More Info
                             </Button>
                         </Grid2>
@@ -97,7 +103,7 @@ const RestaurantPage = () => {
                         <Grid2 container sx={{ mt: 1 }}>
                             <Rating
                                 name="simple-controlled"
-                                value={restaurant?.rating}
+                                value={restaurant.rating}
                                 precision={0.2}
                                 readOnly
                                 size='medium'
@@ -110,6 +116,7 @@ const RestaurantPage = () => {
                     </Box>
                 </Grid2>
             </Box>
+            <RestaurantInfoModal open={openInfo} onClose={handleCloseInfo} restaurantId={restaurantId.id} />
         </Container >
     )
 }

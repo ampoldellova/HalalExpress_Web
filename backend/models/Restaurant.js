@@ -6,7 +6,7 @@ const restaurantSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    hours: {
+    hours: [{
         sunday: {
             start: {
                 type: String,
@@ -77,7 +77,7 @@ const restaurantSchema = new mongoose.Schema({
                 required: true
             }
         },
-    },
+    }],
     time: {
         type: String,
         required: true,
