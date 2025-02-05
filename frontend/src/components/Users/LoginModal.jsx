@@ -28,7 +28,7 @@ const LoginModal = ({ open, onClose, signUp }) => {
 
     const loginUser = async () => {
         try {
-            const { data } = await axios.post(`https://halalexpress.onrender.com/login`, { email, password });
+            const { data } = await axios.post(`https://halalexpress-web.onrender.com/login`, { email, password });
 
             authenticate(data, () => { });
             onClose();
