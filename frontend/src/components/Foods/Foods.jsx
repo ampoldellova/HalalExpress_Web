@@ -2,6 +2,7 @@ import { Card, CardActionArea, CardMedia, Container, Grid2, Pagination, Typograp
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import RestaurantFoodModal from './RestaurantFoodModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -19,9 +20,14 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const Foods = ({foods}) => {
+const Foods = ({ foods }) => {
+    const [openFoodModal, setOpenFoodModal] = useState(false);
+    const [foodId, setFoodId] = useState('');
     const [page, setPage] = useState(1);
     const itemsPerPage = 6;
+
+    const handleOpenFoodModal = () => setOpenFoodModal(true);
+    const handleCloseFoodModal = () => setOpenFoodModal(false);
 
     const handleChange = (event, value) => {
         setPage(value);
@@ -42,7 +48,7 @@ const Foods = ({foods}) => {
                 {paginatedFoods.map((food) => (
                     <Grid2 xs={12} sm={6} md={4} >
                         <Card sx={{ maxWidth: 170, boxShadow: 'none', cursor: 'pointer' }}>
-                            <CardActionArea onClick={() => { }}>
+                            <CardActionArea onClick={() => { handleOpenFoodModal(); setFoodId(food._id) }}>
                                 <CardMedia
                                     sx={{ height: 170, borderRadius: 5, width: 170, objectFit: 'cover' }}
                                     image={food.imageUrl.url}
@@ -76,6 +82,7 @@ const Foods = ({foods}) => {
                 onChange={handleChange}
                 sx={{ mb: 5, display: 'flex', justifyContent: 'center' }}
             />
+            <RestaurantFoodModal open={openFoodModal} onClose={handleCloseFoodModal} foodId={foodId} />
         </>
     )
 }

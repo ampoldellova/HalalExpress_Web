@@ -45,7 +45,6 @@ const RestaurantPage = () => {
     useEffect(() => {
         getRestaurant();
     }, []);
-    console.log(restaurant.rating);
 
     return (
         <Container maxWidth="lg" sx={{ height: '100vh', bgColor: COLORS.offwhite, alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
