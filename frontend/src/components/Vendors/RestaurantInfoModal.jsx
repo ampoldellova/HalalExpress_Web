@@ -4,6 +4,7 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useEffect } from 'react'
 import axios from 'axios';
+import RestaurantMapLocation from './RestaurantMapLocation';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -37,7 +38,6 @@ const RestaurantInfoModal = ({ open, onClose, restaurantId }) => {
         getRestaurant();
     }, []);
 
-    console.log(restaurant?.hours?.sunday?.start);
     return (
         <Modal
             open={open}
@@ -55,15 +55,14 @@ const RestaurantInfoModal = ({ open, onClose, restaurantId }) => {
                         Located at:
                     </Typography>
                 </Grid2>
-                <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray, mt: 1 }}>
+                <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray, my: 1 }}>
                     {restaurant?.coords?.address}
                 </Typography>
-
-                {/* <Grid2 container sx={{ flexDirection: 'row', alignItems: 'center', mt: 2 }}> */}
+                <RestaurantMapLocation coords={restaurant?.coords} />
                 <Accordion sx={{ boxShadow: 'none', mt: 2 }}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        sx={{ padding: 0 }}
+                        sx={{ p: 0 }}
                     >
                         <Grid2 item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                             <Grid2 container sx={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -77,31 +76,30 @@ const RestaurantInfoModal = ({ open, onClose, restaurantId }) => {
                             </Typography>
                         </Grid2>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ flexDirection: 'column' }}>
-                        {/* <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Sunday: {restaurant.hours.sunday.start} - {restaurant.hours.sunday.end}
+                    <AccordionDetails sx={{ flexDirection: 'column', p: 0 }}>
+                        <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
+                            Sunday: {restaurant?.hours.sunday.start} - {restaurant?.hours.sunday.end}
                         </Typography>
                         <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Monday: {restaurant.hours.monday.start} - {restaurant.hours.monday.end}
+                            Monday: {restaurant?.hours.monday.start} - {restaurant?.hours.monday.end}
                         </Typography>
                         <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Tuesday: {restaurant.hours.tuesday.start} - {restaurant.hours.tuesday.end}
+                            Tuesday: {restaurant?.hours.tuesday.start} - {restaurant?.hours.tuesday.end}
                         </Typography>
                         <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Wednesday: {restaurant.hours.wednesday.start} - {restaurant.hours.wednesday.end}
+                            Wednesday: {restaurant?.hours.wednesday.start} - {restaurant?.hours.wednesday.end}
                         </Typography>
                         <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Thursday: {restaurant.hours.thursday.start} - {restaurant.hours.thursday.end}
+                            Thursday: {restaurant?.hours.thursday.start} - {restaurant?.hours.thursday.end}
                         </Typography>
                         <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Friday: {restaurant.hours.friday.start} - {restaurant.hours.friday.end}
+                            Friday: {restaurant?.hours.friday.start} - {restaurant?.hours.friday.end}
                         </Typography>
                         <Typography sx={{ fontSize: 14, fontFamily: 'regular', color: COLORS.gray }}>
-                            Saturday: {restaurant.hours.saturday.start} - {restaurant.hours.saturday.end}
-                        </Typography> */}
+                            Saturday: {restaurant?.hours.saturday.start} - {restaurant?.hours.saturday.end}
+                        </Typography>
                     </AccordionDetails>
                 </Accordion>
-                {/* </Grid2> */}
             </Box>
         </Modal>
     )

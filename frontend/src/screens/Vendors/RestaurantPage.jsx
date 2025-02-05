@@ -42,9 +42,10 @@ const RestaurantPage = () => {
     };
 
     useEffect(() => {
-        getRestaurant();
+        getRestaurant();    
     }, []);
-    
+    console.log(restaurant.rating);
+
     return (
         <Container maxWidth="lg" sx={{ height: '100vh', bgColor: COLORS.offwhite, justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
             <Box component='img' src={restaurant?.imageUrl?.url} sx={{ height: 400, width: '100%', objectFit: 'cover', borderBottomLeftRadius: 15, borderBottomRightRadius: 15 }} />
