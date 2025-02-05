@@ -28,7 +28,7 @@ const LoginModal = ({ open, onClose, signUp }) => {
 
     const loginUser = async () => {
         try {
-            const { data } = await axios.post(`halal-express-kbylfmtyz-ampoldellovas-projects.vercel.app/login`, { email, password });
+            const { data } = await axios.post(`https://halal-express-kbylfmtyz-ampoldellovas-projects.vercel.app//login`, { email, password });
 
             authenticate(data, () => { });
             onClose();

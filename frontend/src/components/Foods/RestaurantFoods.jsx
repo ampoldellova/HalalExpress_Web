@@ -29,7 +29,7 @@ const RestaurantFoods = ({ restaurantId }) => {
 
     const fetchRestaurantFoods = async () => {
         try {
-            const response = await axios.patch(`halal-express-kbylfmtyz-ampoldellovas-projects.vercel.app/api/foods/restaurant/${restaurantId}`, {});
+            const response = await axios.patch(`https://halal-express-kbylfmtyz-ampoldellovas-projects.vercel.app//api/foods/restaurant/${restaurantId}`, {});
             setFoods(response.data);
         } catch (error) {
             console.log("Error fetching foods:", error);
