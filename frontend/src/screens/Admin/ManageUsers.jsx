@@ -36,7 +36,7 @@ const ManageUsers = () => {
                 },
             };
 
-            const { data } = await axios.get(`https://halal-express-kbylfmtyz-ampoldellovas-projects.vercel.app//api/users/list`, config);
+            const { data } = await axios.get(`https://halalexpress.onrender.com/api/users/list`, config);
 
             const formattedData = data.map((user, index) => ({
                 id: user._id,
