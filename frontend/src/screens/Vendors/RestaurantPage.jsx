@@ -7,6 +7,7 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import RestaurantInfoModal from '../../components/Vendors/RestaurantInfoModal';
+import RestaurantFoods from '../../components/Foods/RestaurantFoods';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -42,15 +43,15 @@ const RestaurantPage = () => {
     };
 
     useEffect(() => {
-        getRestaurant();    
+        getRestaurant();
     }, []);
     console.log(restaurant.rating);
 
     return (
-        <Container maxWidth="lg" sx={{ height: '100vh', bgColor: COLORS.offwhite, justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
+        <Container maxWidth="lg" sx={{ height: '100vh', bgColor: COLORS.offwhite, alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
             <Box component='img' src={restaurant?.imageUrl?.url} sx={{ height: 400, width: '100%', objectFit: 'cover', borderBottomLeftRadius: 15, borderBottomRightRadius: 15 }} />
-            <Box sx={{ height: '100%', width: '90%', bgcolor: COLORS.offwhite, mt: -20, borderTopLeftRadius: 15, borderTopRightRadius: 15, boxShadow: 10 }}>
-                <Box sx={{ height: '3%', bgcolor: COLORS.primary, borderTopLeftRadius: 15, borderTopRightRadius: 15 }} />
+            <Box sx={{ height: '100%', width: '90%', mt: -15, bgcolor: COLORS.offwhite, borderTopLeftRadius: 15, borderTopRightRadius: 15, boxShadow: 10 }}>
+                <Box sx={{ bgcolor: COLORS.primary, borderTopLeftRadius: 15, borderTopRightRadius: 15, height: '2.5%' }} />
                 <Grid2 container sx={{ alignItems: 'center', mt: 2, mx: 2 }}>
                     <Box component="img" src={restaurant?.logoUrl?.url} sx={{ height: 150, width: 150, borderRadius: 2, mr: 3 }} />
                     <Box sx={{ width: '80%' }}>
@@ -104,7 +105,8 @@ const RestaurantPage = () => {
                         <Grid2 container sx={{ mt: 1 }}>
                             <Rating
                                 name="simple-controlled"
-                                value={restaurant.rating}
+                                key={restaurant?.rating}
+                                value={restaurant?.rating}
                                 precision={0.2}
                                 readOnly
                                 size='medium'
@@ -116,7 +118,15 @@ const RestaurantPage = () => {
                         </Grid2>
                     </Box>
                 </Grid2>
+
+                <Box sx={{ px: 2, mb: 5 }}>
+                    <Typography sx={{ fontFamily: 'bold', color: COLORS.black, fontSize: 24, mt: 3 }}>
+                        Available Foods
+                    </Typography>
+                    <RestaurantFoods restaurantId={restaurantId.id} />
+                </Box>
             </Box>
+
             <RestaurantInfoModal open={openInfo} onClose={handleCloseInfo} restaurantId={restaurantId.id} />
         </Container >
     )
