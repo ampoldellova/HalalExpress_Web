@@ -27,7 +27,7 @@ const RestaurantInfoModal = ({ open, onClose, restaurantId }) => {
 
     const getRestaurant = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/restaurant/byId/${restaurantId}`);
+            const response = await axios.get(`halal-express-kbylfmtyz-ampoldellovas-projects.vercel.app/api/restaurant/byId/${restaurantId}`);
             setRestaurant(response.data.data);
         } catch (error) {
             console.log("Error fetching restaurant:", error);
