@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Container, Grid2, Rating, Typography } from '@mui/material';
+import { Box, Button, Container, Grid2, Rating, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
