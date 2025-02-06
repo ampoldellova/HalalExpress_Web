@@ -29,7 +29,7 @@ const RestaurantFoods = ({ restaurantId }) => {
 
     const fetchRestaurantFoods = async () => {
         try {
-            const response = await axios.patch(`https://halalexpress-web.onrender.com/api/foods/restaurant/${restaurantId}`, {});
+            const response = await axios.patch(`http://localhost:6002/api/foods/restaurant/${restaurantId}`, {});
             setFoods(response.data);
         } catch (error) {
             console.log("Error fetching foods:", error);

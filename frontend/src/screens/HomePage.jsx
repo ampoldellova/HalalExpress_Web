@@ -40,7 +40,7 @@ const HomePage = () => {
 
     const getRestaurants = async () => {
         try {
-            const response = await axios.get(`https://halalexpress-web.onrender.com/api/restaurant/list`);
+            const response = await axios.get(`http://localhost:6002/api/restaurant/list`);
             setRestaurants(response.data);
             setFoodsLoaded(true);
         } catch (error) {
@@ -50,7 +50,7 @@ const HomePage = () => {
 
     const getFoods = async () => {
         try {
-            const response = await axios.get(`https://halalexpress-web.onrender.com/api/foods/list`);
+            const response = await axios.get(`http://localhost:6002/api/foods/list`);
             setFoods(response.data);
             setRestaurantsLoaded(true);
         } catch (error) {

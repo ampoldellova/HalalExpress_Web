@@ -31,7 +31,7 @@ const SignUpModal = ({ open, onClose }) => {
 
     const signUpUser = async () => {
         try {
-            const response = await axios.post(`https://halalexpress-web.onrender.com/register`, { username, email, phone, password });
+            const response = await axios.post(`http://localhost:6002/register`, { username, email, phone, password });
             console.log(response);
             if (response.data.status) {
                 onClose();
