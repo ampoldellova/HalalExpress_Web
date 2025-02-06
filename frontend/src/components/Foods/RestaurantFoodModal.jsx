@@ -29,7 +29,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
 
     const getFood = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/foods/${foodId}`);
+            const response = await axios.get(`https://halalexpress-web.onrender.com/api/foods/${foodId}`);
             setFood(response.data);
         } catch (error) {
             console.log("Error fetching food:", error);

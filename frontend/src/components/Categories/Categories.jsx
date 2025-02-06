@@ -24,7 +24,7 @@ const Categories = ({ setSelectedCategory, setSelectedSection, setSelectedValue 
 
     const getCategories = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/category`);
+            const response = await axios.get(`https://halalexpress-web.onrender.com/api/category`);
             setCategories(response.data);
         } catch (error) {
             console.log("Error fetching restaurants:", error);
