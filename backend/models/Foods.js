@@ -14,7 +14,6 @@ const foodSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true,
-        // autopopulate: true,
     },
     code: {
         type: String,
@@ -28,7 +27,6 @@ const foodSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant',
         required: true,
-        // autopopulate: { select: 'title' },
     },
     rating: {
         type: Number,
