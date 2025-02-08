@@ -4,8 +4,8 @@ let baseUrl = "";
 
 {
     Platform.OS == "android"
-        ? (baseUrl = "https://halalexpress-web.onrender.com")
-        : (baseUrl = "https://halalexpress-web.onrender.com");
+        ? (baseUrl = "http://localhost:6002")
+        : (baseUrl = "http://localhost:6002");
 
 }
 

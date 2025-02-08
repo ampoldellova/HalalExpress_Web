@@ -3,6 +3,7 @@ import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOut
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { getToken, getUser } from '../../utils/helpers';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -25,11 +26,11 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
     const [additives, setAdditives] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [count, setCount] = useState(1);
-
+    const token = getToken();
 
     const getFood = async () => {
         try {
-            const response = await axios.get(`https://halalexpress-web.onrender.com/api/foods/${foodId}`);
+            const response = await axios.get(`http://localhost:6002/api/foods/${foodId}`);
             setFood(response.data);
         } catch (error) {
             console.log("Error fetching food:", error);
@@ -53,6 +54,26 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
         })
     }
 
+    const addToCart = async () => {
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            const response = await axios.post(`http://localhost:6002/api/cart/`, {
+                productId: foodId,
+                additives: additives,
+                totalPrice: (food.price + totalPrice) * count,
+                quantity: count
+            }, config);
+
+            console.log(response.data);
+        } catch (error) {
+            console.log("Error adding to cart:", error);
+        }
+    }
+
     const increment = () => {
         setCount(count + 1)
     }
@@ -73,8 +94,9 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
     useEffect(() => {
         getFood();
         calculatePrice();
-    }, [foodId, additives]);
+    }, [foodId]);
 
+    // console.log(additives)
     return (
         <Modal
             open={open}
@@ -149,7 +171,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
                                 </IconButton>
                             </Grid2>
                         </Grid2>
-                        <Button sx={{ width: '70%', textTransform: 'none', fontFamily: 'regular', fontSize: 16, backgroundColor: COLORS.primary, borderRadius: 3, color: COLORS.white }}>
+                        <Button onClick={addToCart} sx={{ width: '70%', textTransform: 'none', fontFamily: 'regular', fontSize: 16, backgroundColor: COLORS.primary, borderRadius: 3, color: COLORS.white }}>
                             Add to Cart
                         </Button>
                     </Grid2>

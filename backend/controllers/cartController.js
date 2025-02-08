@@ -32,8 +32,8 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ status: false, message: error.message })
         }
-
     },
+
     removeProductFromCart: async (req, res) => {
         const itemId = req.params.id
         const userId = req.user.id
