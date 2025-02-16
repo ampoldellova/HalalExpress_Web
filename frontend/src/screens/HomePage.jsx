@@ -14,6 +14,7 @@ import { getUser } from '../utils/helpers';
 import ProductCategories from '../components/Categories/ProductCategories';
 import CategoryProducts from '../components/Categories/CategoryProducts';
 import Products from '../components/Products/Products';
+import Suppliers from '../components/Suppliers/Suppliers';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -42,9 +43,28 @@ const HomePage = () => {
     const [foodsLoaded, setFoodsLoaded] = useState(false);
     const [productsLoaded, setProductsLoaded] = useState(false);
     const [restaurants, setRestaurants] = React.useState([]);
+    const [suppliers, setSuppliers] = React.useState([]);
     const [restaurantsLoaded, setRestaurantsLoaded] = React.useState(false);
+    const [suppliersLoaded, setSuppliersLoaded] = React.useState(false);
     const [loader, setLoader] = React.useState(true);
     const user = getUser();
+
+    const getSuppliers = async () => {
+        try {
+            const token = sessionStorage.getItem('token');
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(token)}`
+                }
+            }
+
+            const response = await axios.get(`http://localhost:6002/api/supplier/list`, config);
+            setSuppliers(response.data);
+            setSuppliersLoaded(true);
+        } catch (error) {
+            console.log("Error fetching restaurants:", error);
+        }
+    };
 
     const getRestaurants = async () => {
         try {
@@ -84,13 +104,14 @@ const HomePage = () => {
     };
 
     useEffect(() => {
-        if (restaurantsLoaded && foodsLoaded) {
+        if (restaurantsLoaded && foodsLoaded && productsLoaded && suppliersLoaded) {
             setLoader(false);
         }
-    }, [restaurantsLoaded, foodsLoaded]);
+    }, [restaurantsLoaded, foodsLoaded, productsLoaded, suppliersLoaded]);
 
     useEffect(() => {
         getRestaurants();
+        getSuppliers();
         getFoods();
         getProducts();
         if (selectedCategory) {
@@ -178,6 +199,7 @@ const HomePage = () => {
                             <>
                                 {user.userType === 'Vendor' ? (
                                     <>
+                                        <Suppliers suppliers={suppliers} />
                                         <Divider sx={{ mt: 5 }} />
                                         <Products products={products} />
                                     </>
