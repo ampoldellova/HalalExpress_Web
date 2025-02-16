@@ -57,28 +57,96 @@ const LoginModal = ({ open, onClose, signUp }) => {
                     <Box sx={styles.formContainer}>
                         <TextField
                             placeholder='Enter Email'
-                            label="Email"
                             variant="outlined"
                             name="email"
                             value={email}
+                            autoComplete="off"
                             onChange={(e) => setEmail(e.target.value)}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <InputAdornment position="start"><EmailOutlinedIcon /></InputAdornment>,
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailOutlinedIcon />
+                                    </InputAdornment>
+                                ),
+                                sx: {
+                                    '& input': {
+                                        fontFamily: 'regular',
+                                        fontSize: 16,
+                                        '&::placeholder': {
+                                            fontFamily: 'regular',
+                                            fontSize: 16
+                                        },
+                                    },
+                                },
+                            }}
+                            InputLabelProps={{
+                                shrink: false,
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    bgcolor: COLORS.offwhite,
+                                    borderRadius: 8,
+                                    '& fieldset': {
+                                        borderColor: COLORS.offwhite,
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: COLORS.secondary,
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: COLORS.secondary,
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    fontFamily: 'regular',
+                                    fontSize: 16,
                                 },
                             }}
                         />
                         <TextField
                             placeholder='Enter Password'
-                            label="Password"
                             variant="outlined"
                             type="password"
                             name="password"
                             value={password}
+                            autoComplete='off'
                             onChange={(e) => setPassword(e.target.value)}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <InputAdornment position="start"><HttpsOutlinedIcon /></InputAdornment>,
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <HttpsOutlinedIcon />
+                                    </InputAdornment>
+                                ),
+                                sx: {
+                                    '& input': {
+                                        fontFamily: 'regular',
+                                        fontSize: 16,
+                                        '&::placeholder': {
+                                            fontFamily: 'regular',
+                                            fontSize: 16
+                                        },
+                                    },
+                                },
+                            }}
+                            InputLabelProps={{
+                                shrink: false,
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    bgcolor: COLORS.offwhite,
+                                    borderRadius: 8,
+                                    '& fieldset': {
+                                        borderColor: COLORS.offwhite,
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: COLORS.secondary,
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: COLORS.secondary,
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    fontFamily: 'regular',
+                                    fontSize: 16,
                                 },
                             }}
                         />
