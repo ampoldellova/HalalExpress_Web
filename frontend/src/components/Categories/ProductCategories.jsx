@@ -18,21 +18,21 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const Categories = ({ setSelectedCategory, setSelectedSection, setSelectedValue }) => {
-    const [categories, setCategories] = useState([]);
+const ProductCategories = ({ setSelectedCategory, setSelectedSection, setSelectedValue }) => {
+    const [productCategories, setProductCategories] = useState([]);
     const [selected, setSelected] = useState(null);
 
-    const getCategories = async () => {
+    const getProductCategories = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/category`);
-            setCategories(response.data);
+            const response = await axios.get(`http://localhost:6002/api/supplyCategory/`);
+            setProductCategories(response.data)
         } catch (error) {
             console.log("Error fetching restaurants:", error);
         }
-    };
+    }
 
     useEffect(() => {
-        getCategories();
+        getProductCategories();
     }, []);
 
     const handleSelectedCategory = (item) => {
@@ -52,23 +52,23 @@ const Categories = ({ setSelectedCategory, setSelectedSection, setSelectedValue 
     return (
         <>
             <Grid2 container spacing={3} sx={{ mt: 2, justifyContent: 'space-between', mt: 5, alignItems: 'center' }} >
-                {categories.map((category) => (
+                {productCategories.map((productCategory) => (
                     <Grid2 xs={12} sm={6} md={4} >
                         <Box
                             component="img"
-                            onClick={() => handleSelectedCategory(category)}
+                            onClick={() => handleSelectedCategory(productCategory)}
                             sx={{
                                 height: 60,
                                 width: 60,
                                 display: 'flex',
                                 margin: '0 auto',
-                                borderColor: category.value == selected ? COLORS.secondary : 'transparent',
+                                borderColor: productCategory.value == selected ? COLORS.secondary : 'transparent',
                                 cursor: 'pointer'
                             }}
-                            src={category.imageUrl.url}
+                            src={productCategory.imageUrl.url}
                         />
                         <Typography sx={{ color: COLORS.black, fontSize: 14, fontFamily: 'regular', textAlign: 'center', mt: 1 }}>
-                            {category.title}
+                            {productCategory.title}
                         </Typography>
                     </Grid2>
                 ))}
@@ -77,4 +77,4 @@ const Categories = ({ setSelectedCategory, setSelectedSection, setSelectedValue 
     )
 }
 
-export default Categories
+export default ProductCategories

@@ -10,6 +10,9 @@ import FastfoodIcon from '@mui/icons-material/Fastfood';
 import axios from 'axios';
 import CategoryFoods from '../components/Categories/CategoryFoods';
 import Loader from '../components/Loader';
+import { getUser } from '../utils/helpers';
+import ProductCategories from '../components/Categories/ProductCategories';
+import CategoryProducts from '../components/Categories/CategoryProducts';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -32,11 +35,15 @@ const HomePage = () => {
     const [selectedSection, setSelectedSection] = useState(null);
     const [selectedValue, setSelectedValue] = useState(null);
     const [filteredFoods, setFilteredFoods] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [foods, setFoods] = useState([]);
+    const [products, setProducts] = useState([]);
     const [foodsLoaded, setFoodsLoaded] = useState(false);
+    const [productsLoaded, setProductsLoaded] = useState(false);
     const [restaurants, setRestaurants] = React.useState([]);
     const [restaurantsLoaded, setRestaurantsLoaded] = React.useState(false);
     const [loader, setLoader] = React.useState(true);
+    const user = getUser();
 
     const getRestaurants = async () => {
         try {
@@ -58,6 +65,23 @@ const HomePage = () => {
         }
     };
 
+    const getProducts = async () => {
+        try {
+            const token = sessionStorage.getItem('token');
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(token)}`
+                }
+            }
+
+            const response = await axios.get(`http://localhost:6002/api/ingredients/list`, config);
+            setProducts(response.data);
+            setProductsLoaded(true);
+        } catch (error) {
+            console.log("Error fetching products:", error);
+        }
+    };
+
     useEffect(() => {
         if (restaurantsLoaded && foodsLoaded) {
             setLoader(false);
@@ -67,13 +91,17 @@ const HomePage = () => {
     useEffect(() => {
         getRestaurants();
         getFoods();
+        getProducts();
         if (selectedCategory) {
-            const filtered = foods.filter(food => food.category._id === selectedCategory);
-            setFilteredFoods(filtered);
+            const filteredFoods = foods.filter(food => food.category._id === selectedCategory);
+            const filteredProducts = products.filter(product => product.category._id === selectedCategory);
+            setFilteredFoods(filteredFoods);
+            setFilteredProducts(filteredProducts);
         } else {
             setFilteredFoods(foods);
+            setFilteredProducts(products);
         }
-    }, [selectedCategory, foods]);
+    }, [selectedCategory, foods, products]);
 
     return (
         <>
@@ -123,17 +151,27 @@ const HomePage = () => {
                             </Box>
                         </Grid2>
                     </Box >
+
                     <Container maxWidth="lg" sx={{ height: '100vh' }}>
-                        <Categories setSelectedCategory={setSelectedCategory} setSelectedSection={setSelectedSection} setSelectedValue={setSelectedValue} />
+                        {user.userType === 'Vendor' ? (
+                            <ProductCategories setSelectedCategory={setSelectedCategory} setSelectedSection={setSelectedSection} setSelectedValue={setSelectedValue} />
+                        ) : (
+                            <Categories setSelectedCategory={setSelectedCategory} setSelectedSection={setSelectedSection} setSelectedValue={setSelectedValue} />
+                        )}
+
                         {selectedCategory ? (
                             <>
                                 <Grid2 container sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 5 }}>
                                     <Typography sx={{ color: COLORS.black, fontSize: 24, fontFamily: 'bold' }}>
-                                        Food(s) in {selectedValue}
+                                        {user.userType === 'Vendor' ? `Product(s) in ${selectedValue}` : `Food(s) in ${selectedValue}`}
                                     </Typography>
                                     <FastfoodIcon sx={{ fontSize: 24, color: COLORS.secondary }} />
                                 </Grid2>
-                                <CategoryFoods foods={filteredFoods} />
+                                {user.userType === 'Vendor' ? (
+                                    <CategoryProducts products={filteredProducts} />
+                                ) : (
+                                    <CategoryFoods foods={filteredFoods} />
+                                )}
                             </>
                         ) : (
                             <>
@@ -144,7 +182,8 @@ const HomePage = () => {
                         )}
                     </Container >
                 </>
-            )}
+            )
+            }
         </>
     )
 }
