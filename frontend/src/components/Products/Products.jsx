@@ -2,7 +2,6 @@ import { Card, CardActionArea, CardMedia, Container, Grid2, Pagination, Typograp
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import RestaurantFoodModal from './RestaurantFoodModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -20,41 +19,38 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const Foods = ({ foods }) => {
-    const [openFoodModal, setOpenFoodModal] = useState(false);
-    const [foodId, setFoodId] = useState('');
+const Products = ({ products }) => {
+    const [productId, setProductId] = useState('');
     const [page, setPage] = useState(1);
     const itemsPerPage = 6;
-
-    const handleOpenFoodModal = () => setOpenFoodModal(true);
-    const handleCloseFoodModal = () => setOpenFoodModal(false);
 
     const handleChange = (event, value) => {
         setPage(value);
     };
 
-    const paginatedFoods = foods.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    const paginatedProducts = products.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
     return (
         <>
             <Grid2 container sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 5 }}>
                 <Typography sx={{ color: COLORS.black, fontSize: 24, fontFamily: 'bold' }}>
-                    Available Food(s)
+                    Available Product(s)
                 </Typography>
                 <FastfoodIcon sx={{ fontSize: 24, color: COLORS.secondary }} />
             </Grid2>
 
             <Grid2 container spacing={3} sx={{ mt: 2, justifyContent: 'center', mb: 5 }} >
-                {paginatedFoods.map((food) => (
+                {paginatedProducts.map((product) => (
                     <Grid2 xs={12} sm={6} md={4} >
                         <Card sx={{ maxWidth: 170, boxShadow: 'none', cursor: 'pointer' }}>
-                            <CardActionArea onClick={() => { handleOpenFoodModal(); setFoodId(food._id) }}>
+                            <CardActionArea onClick={() => { }}>
+                                {/* <CardActionArea onClick={() => { handleOpenFoodModal(); setProductId(product._id) }}> */}
                                 <CardMedia
                                     sx={{ height: 170, borderRadius: 5, width: 170, objectFit: 'cover' }}
-                                    image={food.imageUrl.url}
+                                    image={product.imageUrl.url}
                                 />
                                 <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 1 }}>
-                                    {food.restaurant.title}
+                                    {product.supplier.title}
                                 </Typography>
                                 <Typography
                                     sx={{
@@ -66,10 +62,10 @@ const Foods = ({ foods }) => {
                                         WebkitBoxOrient: 'vertical',
                                     }}
                                 >
-                                    {food.title}
+                                    {product.title}
                                 </Typography>
                                 <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 1 }}>
-                                    from ₱ {food.price}
+                                    from ₱ {product.price}
                                 </Typography>
                             </CardActionArea>
                         </Card>
@@ -77,14 +73,14 @@ const Foods = ({ foods }) => {
                 ))}
             </Grid2>
             <Pagination
-                count={Math.ceil(foods.length / itemsPerPage)}
+                count={Math.ceil(products.length / itemsPerPage)}
                 page={page}
                 onChange={handleChange}
                 sx={{ mb: 5, display: 'flex', justifyContent: 'center' }}
             />
-            <RestaurantFoodModal open={openFoodModal} onClose={handleCloseFoodModal} foodId={foodId} />
+            {/* <RestaurantFoodModal open={openFoodModal} onClose={handleCloseFoodModal} foodId={foodId} /> */}
         </>
     )
 }
 
-export default Foods
+export default Products

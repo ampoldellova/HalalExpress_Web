@@ -13,6 +13,7 @@ import Loader from '../components/Loader';
 import { getUser } from '../utils/helpers';
 import ProductCategories from '../components/Categories/ProductCategories';
 import CategoryProducts from '../components/Categories/CategoryProducts';
+import Products from '../components/Products/Products';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -175,9 +176,18 @@ const HomePage = () => {
                             </>
                         ) : (
                             <>
-                                <Restaurants restaurants={restaurants} />
-                                <Divider sx={{ mt: 5 }} />
-                                <Foods foods={foods} />
+                                {user.userType === 'Vendor' ? (
+                                    <>
+                                        <Divider sx={{ mt: 5 }} />
+                                        <Products products={products} />
+                                    </>
+                                ) : (
+                                    <>
+                                        <Restaurants restaurants={restaurants} />
+                                        <Divider sx={{ mt: 5 }} />
+                                        <Foods foods={foods} />
+                                    </>
+                                )}
                             </>
                         )}
                     </Container >
