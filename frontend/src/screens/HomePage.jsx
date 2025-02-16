@@ -52,15 +52,20 @@ const HomePage = () => {
     const getSuppliers = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${JSON.parse(token)}`
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`
+                    }
                 }
-            }
 
-            const response = await axios.get(`http://localhost:6002/api/supplier/list`, config);
-            setSuppliers(response.data);
-            setSuppliersLoaded(true);
+                const response = await axios.get(`http://localhost:6002/api/supplier/list`, config);
+                setSuppliers(response.data);
+                setSuppliersLoaded(true);
+            } else {
+                console.log("No token found");
+                setSuppliersLoaded(true);
+            }
         } catch (error) {
             console.log("Error fetching restaurants:", error);
         }
@@ -89,15 +94,20 @@ const HomePage = () => {
     const getProducts = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${JSON.parse(token)}`
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`
+                    }
                 }
-            }
 
-            const response = await axios.get(`http://localhost:6002/api/ingredients/list`, config);
-            setProducts(response.data);
-            setProductsLoaded(true);
+                const response = await axios.get(`http://localhost:6002/api/ingredients/list`, config);
+                setProducts(response.data);
+                setProductsLoaded(true);
+            } else {
+                console.log("No token found");
+                setProductsLoaded(true);
+            }
         } catch (error) {
             console.log("Error fetching products:", error);
         }
