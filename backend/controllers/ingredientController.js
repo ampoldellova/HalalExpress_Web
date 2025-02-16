@@ -90,4 +90,20 @@ module.exports = {
             res.status(500).json({ status: false, message: error.message })
         }
     },
+
+    getIngredientById: async (req, res) => {
+        const ingredientId = req.params.id
+
+        try {
+            const ingredient = await Ingredient.findById(ingredientId)
+
+            if (!ingredient) {
+                return res.status(404).json({ status: false, message: "Product not found" })
+            }
+
+            res.status(200).json(ingredient)
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message })
+        }
+    },
 }

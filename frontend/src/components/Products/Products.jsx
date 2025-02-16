@@ -2,6 +2,7 @@ import { Card, CardActionArea, CardMedia, Container, Grid2, Pagination, Typograp
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import SupplierProductModal from './SupplierProductModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -20,9 +21,14 @@ const COLORS = {
 };
 
 const Products = ({ products }) => {
+
+    const [openProductModal, setOpenProductModal] = useState(false);
     const [productId, setProductId] = useState('');
     const [page, setPage] = useState(1);
     const itemsPerPage = 6;
+
+    const handleOpenProductModal = () => setOpenProductModal(true);
+    const handleCloseProductModal = () => setOpenProductModal(false);
 
     const handleChange = (event, value) => {
         setPage(value);
@@ -43,8 +49,7 @@ const Products = ({ products }) => {
                 {paginatedProducts.map((product) => (
                     <Grid2 xs={12} sm={6} md={4} >
                         <Card sx={{ maxWidth: 170, boxShadow: 'none', cursor: 'pointer' }}>
-                            <CardActionArea onClick={() => { }}>
-                                {/* <CardActionArea onClick={() => { handleOpenFoodModal(); setProductId(product._id) }}> */}
+                            <CardActionArea onClick={() => { handleOpenProductModal(); setProductId(product._id) }}>
                                 <CardMedia
                                     sx={{ height: 170, borderRadius: 5, width: 170, objectFit: 'cover' }}
                                     image={product.imageUrl.url}
@@ -78,7 +83,7 @@ const Products = ({ products }) => {
                 onChange={handleChange}
                 sx={{ mb: 5, display: 'flex', justifyContent: 'center' }}
             />
-            {/* <RestaurantFoodModal open={openFoodModal} onClose={handleCloseFoodModal} foodId={foodId} /> */}
+            <SupplierProductModal open={openProductModal} onClose={handleCloseProductModal} productId={productId} />
         </>
     )
 }

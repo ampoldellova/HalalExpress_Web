@@ -8,5 +8,6 @@ router.get('/list', verifyVendor, upload.single('imageUrl'), ingredientControlle
 router.patch('/supplier/:supplierId', ingredientController.getIngredientBySupplier)
 router.patch('/:id', verifySupplier, ingredientController.ingredientAvailability)
 router.delete('/:id', verifySupplier, ingredientController.deleteIngredientById)
+router.get('/:id', verifyVendor, ingredientController.getIngredientById)
 
 module.exports = router; 
