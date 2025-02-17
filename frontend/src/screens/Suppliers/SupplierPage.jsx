@@ -6,6 +6,7 @@ import DeliveryDiningOutlinedIcon from '@mui/icons-material/DeliveryDiningOutlin
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import SupplierInfoModal from '../../components/Suppliers/SupplierInfoModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -123,7 +124,8 @@ const SupplierPage = () => {
                     {/* <RestaurantFoods restaurantId={restaurantId.id} /> */}
                 </Box>
             </Box>
-
+            
+            <SupplierInfoModal open={openInfo} onClose={handleCloseInfo} supplierId={supplierId.id} />
             {/* <RestaurantInfoModal open={openInfo} onClose={handleCloseInfo} restaurantId={restaurantId.id} /> */}
         </Container >
     )
