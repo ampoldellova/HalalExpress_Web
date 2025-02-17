@@ -7,6 +7,7 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import SupplierInfoModal from '../../components/Suppliers/SupplierInfoModal';
+import SupplierProducts from '../../components/Products/SupplierProducts';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -121,12 +122,11 @@ const SupplierPage = () => {
                     <Typography sx={{ fontFamily: 'bold', color: COLORS.black, fontSize: 24, mt: 3 }}>
                         Available Foods
                     </Typography>
-                    {/* <RestaurantFoods restaurantId={restaurantId.id} /> */}
+                    <SupplierProducts supplierId={supplierId.id} />
                 </Box>
             </Box>
-            
+
             <SupplierInfoModal open={openInfo} onClose={handleCloseInfo} supplierId={supplierId.id} />
-            {/* <RestaurantInfoModal open={openInfo} onClose={handleCloseInfo} restaurantId={restaurantId.id} /> */}
         </Container >
     )
 }

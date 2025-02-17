@@ -58,7 +58,7 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
     return (
         <Modal
             open={open}
-            onClose={onClose}
+            onClose={() => { onClose(); setCount(1) }}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
