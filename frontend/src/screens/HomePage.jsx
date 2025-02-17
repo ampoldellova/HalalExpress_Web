@@ -52,7 +52,7 @@ const HomePage = () => {
     const getSuppliers = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            if (token) {
+            if (token && user.userType === 'Vendor') {
                 const config = {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(token)}`
@@ -93,7 +93,7 @@ const HomePage = () => {
     const getProducts = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            if (token) {
+            if (token && user.userType === 'Vendor') {
                 const config = {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(token)}`

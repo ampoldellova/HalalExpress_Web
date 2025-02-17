@@ -9,7 +9,7 @@ import logo from '../assets/images/icon.png';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Container, Grid2, Menu, MenuItem } from '@mui/material';
+import { Container, Drawer, Grid2, Menu, MenuItem } from '@mui/material';
 import { getToken, getUser, logout } from '../utils/helpers';
 import SignUpModal from './Users/SignUpModal';
 import LoginModal from './Users/LoginModal';
@@ -17,6 +17,7 @@ import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccount
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined';
 import { useNavigate } from 'react-router-dom';
+import CartDrawer from './Cart/CartDrawer';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -37,8 +38,13 @@ const COLORS = {
 export default function NavigationBar() {
     const navigate = useNavigate();
     const [openLogin, setOpenLogin] = React.useState(false);
+    const [openCart, setOpenCart] = React.useState(false);
     const [openSignUp, setOpenSignUp] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    const toggleCart = (newOpen) => () => {
+        setOpenCart(newOpen);
+    };
 
     const token = getToken();
     const user = getUser();
@@ -60,6 +66,10 @@ export default function NavigationBar() {
         logout(() => { });
         window.location.reload();
     };
+
+    const cartDrawerElement = (
+        <CartDrawer onClick={toggleCart(false)} />
+    );
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -89,7 +99,7 @@ export default function NavigationBar() {
                                             : <ArrowDropDownOutlinedIcon sx={{ color: COLORS.black }} />
                                         }
                                     </Button>
-                                    <IconButton color="inherit" onClick={() => { }}>
+                                    <IconButton color="inherit" onClick={toggleCart(true)}>
                                         <LocalMallOutlinedIcon sx={styles.cartIcon} />
                                     </IconButton>
                                 </Grid2>
@@ -144,6 +154,10 @@ export default function NavigationBar() {
 
             {/* SignUp Modal */}
             <SignUpModal open={openSignUp} onClose={handleCloseSignUp} />
+
+            <Drawer anchor='right' open={openCart} onClose={toggleCart(false)}>
+                {cartDrawerElement}
+            </Drawer>
         </Box>
     );
 }

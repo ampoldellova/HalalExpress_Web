@@ -54,19 +54,19 @@ module.exports = {
         }
     },
 
-    fetchUserCart: async (req, res) => {
+    getCartItems: async (req, res) => {
         const userId = req.user.id;
 
         try {
-            const userCart = await Cart.find({ userId: userId })
-                .populate({
-                    path: "productId",
-                    select: "title imageUrl restaurant rating ratingCount"
-                })
+            const cart = await Cart.findOne({ userId }).populate('cartItems.foodId');
 
-            res.status(200).json({ status: true, cart: userCart })
+            if (!cart) {
+                return res.status(404).json({ status: false, message: 'Cart not found' });
+            }
+
+            res.status(200).json({ status: true, cartItems: cart.cartItems });
         } catch (error) {
-            res.status(500).json({ status: false, message: error.message })
+            res.status(500).json({ status: false, message: error.message });
         }
     },
 
