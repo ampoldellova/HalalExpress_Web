@@ -63,7 +63,6 @@ const HomePage = () => {
                 setSuppliers(response.data);
                 setSuppliersLoaded(true);
             } else {
-                console.log("No token found");
                 setSuppliersLoaded(true);
             }
         } catch (error) {
@@ -105,7 +104,6 @@ const HomePage = () => {
                 setProducts(response.data);
                 setProductsLoaded(true);
             } else {
-                console.log("No token found");
                 setProductsLoaded(true);
             }
         } catch (error) {

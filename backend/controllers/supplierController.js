@@ -91,6 +91,22 @@ module.exports = {
         }
     },
 
+    getSupplier: async (req, res) => {
+        const supplierId = req.params.id
+
+        try {
+            const supplier = await Supplier.findById(supplierId)
+
+            if (!supplier) {
+                return res.status(404).json({ status: false, message: "Supplier not found" })
+            }
+
+            res.status(200).json({ data: supplier })
+        } catch (error) {
+            res.status(500).json({ status: false, message: "Error Retrieving Supplier" })
+        }
+    },
+
     editSupplierDetails: async (req, res) => {
         try {
             if (req.files) {

@@ -10,5 +10,6 @@ router.patch('/:id', verifySupplier, supplierController.serviceAvailability)
 router.patch('/pickup/:id', verifySupplier, supplierController.pickupAvailability)
 router.patch('/delivery/:id', verifySupplier, supplierController.deliveryAvailability)
 router.put('/:id', verifySupplier, upload.fields([{ name: 'imageUrl', maxCount: 1 }, { name: 'logoUrl', maxCount: 1 }]), supplierController.editSupplierDetails);
+router.get('/byId/:id', supplierController.getSupplier);
 
 module.exports = router;

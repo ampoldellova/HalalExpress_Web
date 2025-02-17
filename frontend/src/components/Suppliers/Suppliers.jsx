@@ -35,8 +35,7 @@ const Suppliers = ({ suppliers }) => {
                 {suppliers.map((supplier) => (
                     <Grid2 xs={12} sm={6} md={4} >
                         <Card sx={{ maxWidth: 365, boxShadow: 'none', cursor: 'pointer' }}>
-                            <CardActionArea onClick={() => { }}>
-                                {/* <CardActionArea onClick={() => navigate(`/supplier/${supplier._id}`, { state: { supplier } })}> */}
+                            <CardActionArea onClick={() => navigate(`/supplier/${supplier._id}`, { state: { supplier } })}>
                                 <CardMedia
                                     sx={{ height: 140, borderRadius: 5, width: 365, objectFit: 'cover' }}
                                     image={supplier.imageUrl.url}
