@@ -139,7 +139,7 @@ export default function NavigationBar() {
                                 <Grid2 container spacing={4}>
                                     <Button onClick={handleOpenLogin} variant="outlined" sx={styles.loginBtn}>Log in</Button>
                                     <Button onClick={handleOpenSignUp} variant="contained" sx={styles.signUpBtn}>Sign Up</Button>
-                                    <IconButton color="inherit" onClick={() => { }}>
+                                    <IconButton color="inherit" onClick={toggleCart(true)}>
                                         <LocalMallOutlinedIcon sx={styles.cartIcon} />
                                     </IconButton>
                                 </Grid2>
