@@ -4,6 +4,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { getToken, getUser } from '../../utils/helpers';
+import { toast } from 'react-toastify';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -26,7 +27,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
     const [additives, setAdditives] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [count, setCount] = useState(1);
-    const token = getToken();
+    const [preference, setPreference] = useState('');
 
     const getFood = async () => {
         try {
@@ -54,24 +55,38 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
         })
     }
 
-    const addToCart = async () => {
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-            const response = await axios.post(`http://localhost:6002/api/cart/`, {
-                productId: foodId,
-                additives: additives,
-                totalPrice: (food.price + totalPrice) * count,
-                quantity: count
-            }, config);
-
-            console.log(response.data);
-        } catch (error) {
-            console.log("Error adding to cart:", error);
+    const addFoodToCart = async () => {
+        const cartItem = {
+            foodId: food._id,
+            additives: additives,
+            instructions: preference,
+            quantity: count,
+            totalPrice: (food.price + totalPrice) * count
         }
+
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+                await axios.post(`http://localhost:6002/api/cart/`, cartItem, config);
+                setAdditives([]);
+                setPreference('');
+                setCount(1);
+                onClose();
+                toast.success('Item added to cart');
+                console.log(cartItem)
+            } else {
+                console.log('No token found')
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 
     const increment = () => {
@@ -94,9 +109,8 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
     useEffect(() => {
         getFood();
         calculatePrice();
-    }, [foodId]);
+    }, [foodId, additives]);
 
-    // console.log(additives)
     return (
         <Modal
             open={open}
@@ -156,6 +170,8 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
                                 fontSize: 16,
                             },
                         }}
+                        value={preference}
+                        onChange={(e) => setPreference(e.target.value)}
                     />
                     <Grid2 container sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', mt: 4 }}>
                         <Grid2 container spacing={1} sx={{ justifyContent: 'space-between' }}>
@@ -171,7 +187,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
                                 </IconButton>
                             </Grid2>
                         </Grid2>
-                        <Button onClick={addToCart} sx={{ width: '70%', textTransform: 'none', fontFamily: 'regular', fontSize: 16, backgroundColor: COLORS.primary, borderRadius: 3, color: COLORS.white }}>
+                        <Button onClick={addFoodToCart} sx={{ width: '70%', textTransform: 'none', fontFamily: 'regular', fontSize: 16, backgroundColor: COLORS.primary, borderRadius: 3, color: COLORS.white }}>
                             Add to Cart
                         </Button>
                     </Grid2>
