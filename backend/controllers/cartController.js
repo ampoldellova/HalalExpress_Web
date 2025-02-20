@@ -58,7 +58,7 @@ module.exports = {
             if (!cart) {
                 return res.status(404).json({ message: 'Cart not found' });
             }
-            
+
             cart.cartItems = cart.cartItems.filter(item => item.foodId._id.toString() !== foodId);
 
             await cart.save();
@@ -79,6 +79,34 @@ module.exports = {
             }
 
             res.status(200).json({ status: true, cartItems: cart.cartItems });
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message });
+        }
+    },
+
+    incrementCartItemQuantity: async (req, res) => {
+        const userId = req.user.id;
+        const foodId = req.params.id;
+
+        try {
+            let cart = await Cart.findOne({ userId });
+
+            if (cart) {
+                const existingItemIndex = cart.cartItems.findIndex(item => item.foodId._id.toString() === foodId);
+
+                if (existingItemIndex > -1) {
+                    cart.cartItems[existingItemIndex].quantity += 1;
+                    cart.cartItems[existingItemIndex].totalPrice += cart.cartItems[existingItemIndex].totalPrice / (cart.cartItems[existingItemIndex].quantity - 1);
+                    cart.totalAmount += cart.cartItems[existingItemIndex].totalPrice / cart.cartItems[existingItemIndex].quantity;
+
+                    await cart.save();
+                    return res.status(200).json({ status: true, message: 'Quantity incremented successfully' });
+                } else {
+                    return res.status(404).json({ status: false, message: 'Item not found in cart' });
+                }
+            } else {
+                return res.status(404).json({ status: false, message: 'Cart not found' });
+            }
         } catch (error) {
             res.status(500).json({ status: false, message: error.message });
         }

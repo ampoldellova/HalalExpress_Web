@@ -5,5 +5,6 @@ const { verifyAndAuthorization } = require('../middleware/verifyToken');
 router.post('/', verifyAndAuthorization, cartController.addFoodToCart);
 router.get('/', verifyAndAuthorization, cartController.getCartItems);
 router.delete('/remove-food', verifyAndAuthorization, cartController.removeFoodFromCart);
+router.patch('/increment/:id', verifyAndAuthorization, cartController.incrementCartItemQuantity);
 
 module.exports = router;

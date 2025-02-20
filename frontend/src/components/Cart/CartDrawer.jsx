@@ -71,6 +71,28 @@ const CartDrawer = ({ onClick }) => {
         }
     };
 
+    const incrementFoodQuantity = async (foodId) => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                await axios.patch(`http://localhost:6002/api/cart/increment/${foodId}`, {}, config);
+                toast.success('Item quantity incremented');
+                getCartItems();
+            } else {
+                console.log('No token found');
+            }
+        } catch (error) {
+            toast.error('Failed to increment item quantity');
+            console.log(error.message);
+        }
+    };
+
     useEffect(() => {
         getCartItems()
     }, []);
@@ -113,7 +135,7 @@ const CartDrawer = ({ onClick }) => {
                                                     </IconButton>
                                                 )}
                                                 <Typography sx={{ fontFamily: 'regular', fontSize: 18, mx: 2 }}>{item.quantity}</Typography>
-                                                <IconButton sx={{ padding: 0 }}>
+                                                <IconButton sx={{ padding: 0 }} onClick={() => incrementFoodQuantity(item.foodId._id)}>
                                                     <AddCircleOutlineIcon />
                                                 </IconButton>
                                             </Box>
