@@ -1,8 +1,12 @@
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Container, IconButton, Typography } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getToken, getUser } from '../../utils/helpers'
 import cartImage from '../../assets/images/cart.png'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -50,15 +54,46 @@ const CartDrawer = ({ onClick }) => {
     }, []);
 
     return (
-        <Box sx={{ width: 500 }} onClick={onClick}>
+        <Box sx={{ width: 500 }}>
             <Container maxWidth='sm'>
                 {token && user ? (
                     <>
-                        <Typography sx={{ fontFamily: 'bold', textAlign: 'center', mt: 3, fontSize: 24 }} >Your Cart</Typography>
+                        <Box sx={{ position: 'relative' }}>
+                            <CancelIcon onClick={onClick} sx={{ position: 'absolute', left: 5, cursor: 'pointer', color: COLORS.primary, fontSize: 34 }} />
+                            <Typography sx={{ fontFamily: 'bold', textAlign: 'center', mt: 3, fontSize: 24 }} >Your Cart</Typography>
+                        </Box>
                         {cartItems.map((item) => (
-                            <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2 }}>
-                                <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 100, width: 100, borderRadius: 5, objectFit: 'cover' }} />
-                                <Typography sx={{ fontFamily: 'regular', fontSize: 18, ml: 2 }}>{item.foodId.title}</Typography>
+                            <Box sx={{ display: 'flex', mt: 2 }}>
+                                <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 100, width: 100, borderRadius: 5, objectFit: 'cover', mr: 2 }} />
+                                <Box>
+                                    <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>{item.foodId.title}</Typography>
+                                    {item.additives.length > 0 ? (
+                                        <>
+                                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>
+                                                {item.additives.map((additive) => additive.title).join(', ')}
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>No additives</Typography>
+                                        </>
+                                    )}
+                                    <Box sx={{ display: 'flex', mt: 2, borderWidth: 1, borderColor: COLORS.gray, borderRadius: 8, borderStyle: 'solid', padding: 0.5, width: 90, justifyContent: 'center' }}>
+                                        {item.quantity === 1 ? (
+                                            <IconButton sx={{ padding: 0 }}>
+                                                <DeleteOutlineOutlinedIcon />
+                                            </IconButton>
+                                        ) : (
+                                            <IconButton sx={{ padding: 0 }}>
+                                                <RemoveCircleOutlineOutlinedIcon />
+                                            </IconButton>
+                                        )}
+                                        <Typography sx={{ fontFamily: 'regular', fontSize: 18, mx: 2 }}>{item.quantity}</Typography>
+                                        <IconButton sx={{ padding: 0 }}>
+                                            <AddCircleOutlineIcon />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
                             </Box>
                         ))}
                     </>
