@@ -49,8 +49,23 @@ module.exports = {
         }
     },
 
-    removeProductFromCart: async (req, res) => {
+    removeFoodFromCart: async (req, res) => {
+        try {
+            const { userId, foodId } = req.query;
+            console.log('Request query:', req.query);
 
+            const cart = await Cart.findOne({ userId });
+            if (!cart) {
+                return res.status(404).json({ message: 'Cart not found' });
+            }
+            
+            cart.cartItems = cart.cartItems.filter(item => item.foodId._id.toString() !== foodId);
+
+            await cart.save();
+            res.status(200).json({ message: 'Food item removed from cart', cart });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
     },
 
     getCartItems: async (req, res) => {

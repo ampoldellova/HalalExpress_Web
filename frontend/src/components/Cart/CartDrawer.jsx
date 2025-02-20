@@ -7,6 +7,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { toast } from 'react-toastify'
 
 const COLORS = {
     primary: "#30b9b2",
@@ -49,6 +50,27 @@ const CartDrawer = ({ onClick }) => {
         }
     }
 
+    const removeFoodFromCart = async (foodId) => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                await axios.delete(`http://localhost:6002/api/cart/remove-food?userId=${user._id}&foodId=${foodId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                });
+                toast.success('Item removed from cart');
+                getCartItems();
+            } else {
+                console.log('No token found');
+            }
+        } catch (error) {
+            toast.error('Failed to remove item from cart');
+            console.log(error.message);
+        }
+    };
+
     useEffect(() => {
         getCartItems()
     }, []);
@@ -82,7 +104,7 @@ const CartDrawer = ({ onClick }) => {
                                             )}
                                             <Box sx={{ display: 'flex', mt: 2, borderWidth: 1, borderColor: COLORS.gray, borderRadius: 8, borderStyle: 'solid', padding: 0.5, width: 90, justifyContent: 'center' }}>
                                                 {item.quantity === 1 ? (
-                                                    <IconButton sx={{ padding: 0 }}>
+                                                    <IconButton sx={{ padding: 0 }} onClick={() => removeFoodFromCart(item.foodId._id)}>
                                                         <DeleteOutlineOutlinedIcon />
                                                     </IconButton>
                                                 ) : (

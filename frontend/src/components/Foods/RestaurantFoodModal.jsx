@@ -57,7 +57,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
 
     const addFoodToCart = async () => {
         const cartItem = {
-            foodId: food._id,
+            foodId: foodId,
             additives: additives,
             instructions: preference,
             quantity: count,
