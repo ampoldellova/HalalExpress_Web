@@ -93,6 +93,28 @@ const CartDrawer = ({ onClick }) => {
         }
     };
 
+    const decrementFoodQuantity = async (foodId) => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                await axios.patch(`http://localhost:6002/api/cart/decrement/${foodId}`, {}, config);
+                toast.success('Item quantity decremented');
+                getCartItems();
+            } else {
+                console.log('No token found');
+            }
+        } catch (error) {
+            toast.error('Failed to decrement item quantity');
+            console.log(error.message);
+        }
+    };
+
     useEffect(() => {
         getCartItems()
     }, []);
@@ -130,7 +152,7 @@ const CartDrawer = ({ onClick }) => {
                                                         <DeleteOutlineOutlinedIcon />
                                                     </IconButton>
                                                 ) : (
-                                                    <IconButton sx={{ padding: 0 }}>
+                                                    <IconButton sx={{ padding: 0 }} onClick={() => decrementFoodQuantity(item.foodId._id)}>
                                                         <RemoveCircleOutlineOutlinedIcon />
                                                     </IconButton>
                                                 )}

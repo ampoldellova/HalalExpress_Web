@@ -111,4 +111,36 @@ module.exports = {
             res.status(500).json({ status: false, message: error.message });
         }
     },
+
+    decrementCartItemQuantity: async (req, res) => {
+        const userId = req.user.id;
+        const foodId = req.params.id;
+
+        try {
+            let cart = await Cart.findOne({ userId });
+
+            if (cart) {
+                const existingItemIndex = cart.cartItems.findIndex(item => item.foodId._id.toString() === foodId);
+
+                if (existingItemIndex > -1) {
+                    if (cart.cartItems[existingItemIndex].quantity > 1) {
+                        cart.cartItems[existingItemIndex].quantity -= 1;
+                        cart.cartItems[existingItemIndex].totalPrice -= cart.cartItems[existingItemIndex].totalPrice / (cart.cartItems[existingItemIndex].quantity + 1);
+                        cart.totalAmount -= cart.cartItems[existingItemIndex].totalPrice / cart.cartItems[existingItemIndex].quantity;
+
+                        await cart.save();
+                        return res.status(200).json({ status: true, message: 'Quantity decremented successfully' });
+                    } else {
+                        return res.status(400).json({ status: false, message: 'Quantity cannot be less than 1' });
+                    }
+                } else {
+                    return res.status(404).json({ status: false, message: 'Item not found in cart' });
+                }
+            } else {
+                return res.status(404).json({ status: false, message: 'Cart not found' });
+            }
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message });
+        }
+    },
 };
