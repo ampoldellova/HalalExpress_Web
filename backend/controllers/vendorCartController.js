@@ -46,4 +46,20 @@ module.exports = {
             res.status(500).json({ status: false, message: error.message });
         }
     },
+
+    getCartItems: async (req, res) => {
+        const userId = req.user.id;
+
+        try {
+            const vendorCart = await VendorCart.findOne({ userId }).populate('cartItems.productId');
+
+            if (!vendorCart) {
+                return res.status(404).json({ status: false, message: 'Cart not found' });
+            }
+
+            res.status(200).json({ status: true, cartItems: vendorCart.cartItems });
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message });
+        }
+    },
 };

@@ -12,6 +12,7 @@ const restaurantRouter = require('./routes/restaurant')
 const categoryRouter = require('./routes/category')
 const foodRouter = require('./routes/food')
 const cartRouter = require('./routes/cart')
+const vendorCartRouter = require('./routes/vendorCart')
 const supplierRouter = require('./routes/supplier')
 const supplyCategoryRouter = require('./routes/supplyCategory')
 const ingredientController = require('./routes/ingredient')
@@ -38,6 +39,7 @@ app.use('/api/users', userRouter);
 app.use('/api/restaurant', restaurantRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/foods', foodRouter)
+app.use('/api/cart/vendor', vendorCartRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/supplier', supplierRouter)
 app.use('/api/supplyCategory', supplyCategoryRouter)
