@@ -10,7 +10,7 @@ const vendorCartSchema = new mongoose.Schema({
     cartItems: [{
         productId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product',
+            ref: 'ingredients',
             autopopulate: true,
         },
         instructions: {

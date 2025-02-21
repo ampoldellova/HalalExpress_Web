@@ -4,6 +4,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { getToken, getUser } from '../../utils/helpers';
+import { toast } from 'react-toastify';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -24,6 +25,7 @@ const COLORS = {
 const SupplierProductModal = ({ open, onClose, productId }) => {
     const [product, setProduct] = useState(null);
     const [count, setCount] = useState(1);
+    const [preference, setPreference] = useState('');
 
     const getProduct = async () => {
         try {
@@ -40,6 +42,33 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
             console.log("Error fetching product:", error);
         }
     };
+
+    const addProductToCart = async () => {
+        const cartItem = {
+            productId: productId,
+            totalPrice: product.price * count,
+            quantity: count,
+            instructions: preference
+        }
+
+        try {
+            const token = sessionStorage.getItem('token');
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(token)}`
+                }
+            }
+
+            const response = await axios.post('http://localhost:6002/api/cart/vendor/', cartItem, config);
+            setCount(1);
+            setPreference('');
+            onClose();
+            toast.success('Product added to cart');
+        } catch (error) {
+            console.log("Error adding product to cart:", error);
+            toast.error(error.message);
+        }
+    }
 
     const increment = () => {
         setCount(count + 1)
@@ -91,6 +120,7 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
                                 fontSize: 16,
                             },
                         }}
+                        onChange={(e) => setPreference(e.target.value)}
                     />
                     <Grid2 container sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', mt: 4 }}>
                         <Grid2 container spacing={1} sx={{ justifyContent: 'space-between' }}>
@@ -106,7 +136,7 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
                                 </IconButton>
                             </Grid2>
                         </Grid2>
-                        <Button onClick={() => { }} sx={{ width: '70%', textTransform: 'none', fontFamily: 'regular', fontSize: 16, backgroundColor: COLORS.primary, borderRadius: 3, color: COLORS.white }}>
+                        <Button onClick={addProductToCart} sx={{ width: '70%', textTransform: 'none', fontFamily: 'regular', fontSize: 16, backgroundColor: COLORS.primary, borderRadius: 3, color: COLORS.white }}>
                             Add to Cart
                         </Button>
                     </Grid2>

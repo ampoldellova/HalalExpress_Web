@@ -51,6 +51,26 @@ const CartDrawer = ({ onClick }) => {
         }
     }
 
+    const getVendorCartItems = async () => {
+        try {
+            const token = await sessionStorage.getItem('token')
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                const response = await axios.get(`http://localhost:6002/api/cart/vendor`, config)
+                setVendorCartItems(response.data.cartItems)
+            } else {
+                console.log('No token found')
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     const removeFoodFromCart = async (foodId) => {
         try {
             const token = await sessionStorage.getItem('token');
@@ -117,8 +137,8 @@ const CartDrawer = ({ onClick }) => {
     };
 
     useEffect(() => {
-        getCartItems()
-    }, []);
+        { user && user.userType === 'Vendor' ? getVendorCartItems() : getCartItems() }
+    }, [user]);
 
     return (
         <Box sx={{ width: 500 }}>

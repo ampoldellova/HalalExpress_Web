@@ -9,8 +9,7 @@ module.exports = {
             let vendorCart = await VendorCart.findOne({ userId });
 
             if (vendorCart) {
-                const existingItemIndex = vendorCart.cartItems.findIndex(item => item.productId.toString() === productId);
-
+                const existingItemIndex = vendorCart.cartItems.findIndex(item => item.productId.toString() === productId.toString());
                 if (existingItemIndex > -1) {
                     vendorCart.cartItems[existingItemIndex].quantity += quantity;
                     vendorCart.cartItems[existingItemIndex].totalPrice += totalPrice;
@@ -43,6 +42,7 @@ module.exports = {
             const count = await VendorCart.countDocuments({ userId });
             res.status(200).json({ status: true, count });
         } catch (error) {
+            console.error('Error adding product to cart:', error);
             res.status(500).json({ status: false, message: error.message });
         }
     },
