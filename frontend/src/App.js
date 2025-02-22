@@ -25,7 +25,7 @@ function App() {
           <Route path="/supplier/:id" element={<SupplierPage />} />
         </Routes>
       </Router>
-      <ToastContainer position='bottom-right' />
+      <ToastContainer position='bottom-right' stacked limit={5} />
     </div>
   );
 }
