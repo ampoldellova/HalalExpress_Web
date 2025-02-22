@@ -3,6 +3,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getToken, getUser } from '../../utils/helpers'
 import cartImage from '../../assets/images/cart.png'
+import empty from '../../assets/images/empty.png'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
@@ -316,7 +317,7 @@ const CartDrawer = ({ onClick }) => {
                 ) : (
                     <>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column' }}>
-                            <Box component='img' src={cartImage} sx={{ height: 200, width: 200 }} />
+                            <Box component='img' src={empty} sx={{ height: 200, width: 200 }} />
                             <Typography sx={{ fontFamily: 'regular', textAlign: 'center', fontSize: 14, color: COLORS.gray, mt: 2 }}>Please login first to continue.</Typography>
                         </Box>
                     </>
