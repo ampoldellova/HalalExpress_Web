@@ -135,6 +135,28 @@ const CartDrawer = ({ onClick }) => {
         }
     };
 
+    const incrementProductQuantity = async (productId) => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                await axios.patch(`http://localhost:6002/api/cart/vendor/increment/${productId}`, {}, config);
+                toast.success('Product quantity incremented');
+                getVendorCartItems();
+            } else {
+                console.log('No token found');
+            }
+        } catch (error) {
+            toast.error('Failed to increment product quantity');
+            console.log(error.message);
+        }
+    };
+
     const decrementFoodQuantity = async (foodId) => {
         try {
             const token = await sessionStorage.getItem('token');
@@ -202,9 +224,11 @@ const CartDrawer = ({ onClick }) => {
                                                 <Box component='img' src={item.productId.imageUrl.url} sx={{ height: 100, width: 100, borderRadius: 5, objectFit: 'cover', mr: 2 }} />
                                                 <Box>
                                                     <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>{item.productId.title}</Typography>
-                                                    <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>
-                                                        {item.instructions}
-                                                    </Typography>
+                                                    {item.instructions === '' ? (
+                                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>No instructions</Typography>
+                                                    ) : (
+                                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>{item.instructions}</Typography>
+                                                    )}
                                                     <Box sx={{ display: 'flex', mt: 2, borderWidth: 1, borderColor: COLORS.gray, borderRadius: 8, borderStyle: 'solid', padding: 0.5, width: 90, justifyContent: 'center' }}>
                                                         {item.quantity === 1 ? (
                                                             <IconButton sx={{ padding: 0 }} onClick={() => { removeProductFromCart(item.productId._id) }}>
@@ -216,7 +240,7 @@ const CartDrawer = ({ onClick }) => {
                                                             </IconButton>
                                                         )}
                                                         <Typography sx={{ fontFamily: 'regular', fontSize: 18, mx: 2 }}>{item.quantity}</Typography>
-                                                        <IconButton sx={{ padding: 0 }} onClick={() => { }}>
+                                                        <IconButton sx={{ padding: 0 }} onClick={() => { incrementProductQuantity(item.productId._id) }}>
                                                             <AddCircleOutlineIcon />
                                                         </IconButton>
                                                     </Box>
