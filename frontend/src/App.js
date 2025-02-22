@@ -14,9 +14,6 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* {user.userType === 'Admin' ?
-          (<></>) : (<NavigationBar />)
-        } */}
         <NavigationBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
