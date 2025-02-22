@@ -62,4 +62,22 @@ module.exports = {
             res.status(500).json({ status: false, message: error.message });
         }
     },
+
+    removeProductFromCart: async (req, res) => {
+        try {
+            const { userId, productId } = req.query;
+
+            const vendorCart = await VendorCart.findOne({ userId });
+            if (!vendorCart) {
+                return res.status(404).json({ message: 'Cart not found' });
+            }
+
+            vendorCart.cartItems = vendorCart.cartItems.filter(item => item.productId._id.toString() !== productId);
+
+            await vendorCart.save();
+            res.status(200).json({ status: true });
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message });
+        }
+    }
 };

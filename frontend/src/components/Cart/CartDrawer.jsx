@@ -92,6 +92,27 @@ const CartDrawer = ({ onClick }) => {
         }
     };
 
+    const removeProductFromCart = async (productId) => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                await axios.delete(`http://localhost:6002/api/cart/vendor/remove-product?userId=${user._id}&productId=${productId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                });
+                toast.success('Product removed from cart');
+                getVendorCartItems();
+            } else {
+                console.log('No token found');
+            }
+        } catch (error) {
+            toast.error('Failed to remove product from cart');
+            console.log(error.message);
+        }
+    };
+
     const incrementFoodQuantity = async (foodId) => {
         try {
             const token = await sessionStorage.getItem('token');
@@ -163,7 +184,7 @@ const CartDrawer = ({ onClick }) => {
                                                     </Typography>
                                                     <Box sx={{ display: 'flex', mt: 2, borderWidth: 1, borderColor: COLORS.gray, borderRadius: 8, borderStyle: 'solid', padding: 0.5, width: 90, justifyContent: 'center' }}>
                                                         {item.quantity === 1 ? (
-                                                            <IconButton sx={{ padding: 0 }} onClick={() => { }}>
+                                                            <IconButton sx={{ padding: 0 }} onClick={() => { removeProductFromCart(item.productId._id) }}>
                                                                 <DeleteOutlineOutlinedIcon />
                                                             </IconButton>
                                                         ) : (

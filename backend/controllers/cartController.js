@@ -52,7 +52,6 @@ module.exports = {
     removeFoodFromCart: async (req, res) => {
         try {
             const { userId, foodId } = req.query;
-            console.log('Request query:', req.query);
 
             const cart = await Cart.findOne({ userId });
             if (!cart) {
