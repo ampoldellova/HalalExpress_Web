@@ -1,4 +1,5 @@
 const VendorCart = require('../models/VendorCart');
+const { decrementCartItemQuantity } = require('./cartController');
 
 module.exports = {
     addProductToCart: async (req, res) => {
@@ -79,5 +80,38 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ status: false, message: error.message });
         }
-    }
+    },
+
+    decrementCartItemQuantity: async (req, res) => {
+        const userId = req.user.id;
+        const productId = req.params.id;
+
+        try {
+            let vendorCart = await VendorCart.findOne({ userId });
+
+            if (vendorCart) {
+                const existingItemIndex = vendorCart.cartItems.findIndex(item => item.productId._id.toString() === productId);
+
+                if (existingItemIndex > -1) {
+                    if (vendorCart.cartItems[existingItemIndex].quantity > 1) {
+                        vendorCart.cartItems[existingItemIndex].quantity -= 1;
+                        vendorCart.cartItems[existingItemIndex].totalPrice -= vendorCart.cartItems[existingItemIndex].totalPrice / (vendorCart.cartItems[existingItemIndex].quantity + 1);
+                        vendorCart.totalAmount -= vendorCart.cartItems[existingItemIndex].totalPrice / vendorCart.cartItems[existingItemIndex].quantity;
+
+                        await vendorCart.save();
+                        return res.status(200).json({ status: true, message: 'Quantity decremented successfully' });
+                    } else {
+                        return res.status(400).json({ status: false, message: 'Quantity cannot be less than 1' });
+                    }
+                } else {
+                    return res.status(404).json({ status: false, message: 'Item not found in cart' });
+                }
+            } else {
+                return res.status(404).json({ status: false, message: 'Cart not found' });
+            }
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message });
+        }
+    },
+
 };

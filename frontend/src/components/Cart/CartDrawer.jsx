@@ -157,6 +157,29 @@ const CartDrawer = ({ onClick }) => {
         }
     };
 
+    const decrementProductQuantity = async (productId) => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                await axios.patch(`http://localhost:6002/api/cart/vendor/decrement/${productId}`, {}, config);
+                toast.success('Product quantity decremented');
+                getVendorCartItems();
+            } else {
+                console.log('No token found');
+            }
+        } catch (error) {
+            toast.error('Failed to decrement product quantity');
+            console.log(error.message);
+        }
+    };
+
+
     useEffect(() => {
         { user && user.userType === 'Vendor' ? getVendorCartItems() : getCartItems() }
     }, [user]);
@@ -188,7 +211,7 @@ const CartDrawer = ({ onClick }) => {
                                                                 <DeleteOutlineOutlinedIcon />
                                                             </IconButton>
                                                         ) : (
-                                                            <IconButton sx={{ padding: 0 }} onClick={() => { }}>
+                                                            <IconButton sx={{ padding: 0 }} onClick={() => { decrementProductQuantity(item.productId._id) }}>
                                                                 <RemoveCircleOutlineOutlinedIcon />
                                                             </IconButton>
                                                         )}
