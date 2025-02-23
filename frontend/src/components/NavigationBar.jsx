@@ -126,6 +126,12 @@ export default function NavigationBar() {
                                             </Typography>
                                         </MenuItem>
                                     )}
+                                    <MenuItem onClick={() => { navigate(`/profile/${user._id}`); handleCloseUserMenu(); }}>
+                                        <Person2OutlinedIcon sx={{ color: COLORS.gray }} />
+                                        <Typography sx={styles.menuItemText}>
+                                            Profile
+                                        </Typography>
+                                    </MenuItem>
                                     <MenuItem onClick={handleLogout}>
                                         <LogoutIcon sx={{ color: COLORS.gray }} />
                                         <Typography sx={styles.menuItemText}>

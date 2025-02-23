@@ -48,7 +48,7 @@ const RestaurantPage = () => {
 
     return (
         <Container maxWidth="lg" sx={{ height: '100vh', bgColor: COLORS.offwhite, alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
-            <Box component='img' src={restaurant?.imageUrl?.url} sx={{ height: 400, width: '100%', objectFit: 'cover', borderBottomLeftRadius: 15, borderBottomRightRadius: 15 }} />
+            <Box component='img' src={restaurant?.imageUrl?.url} sx={{ height: '40%', width: '100%', objectFit: 'cover', borderBottomLeftRadius: 15, borderBottomRightRadius: 15 }} />
             <Box sx={{ height: '100%', width: '90%', mt: -15, bgcolor: COLORS.offwhite, borderTopLeftRadius: 15, borderTopRightRadius: 15, boxShadow: 10 }}>
                 <Box sx={{ bgcolor: COLORS.primary, borderTopLeftRadius: 15, borderTopRightRadius: 15, height: '2.5%' }} />
                 <Grid2 container sx={{ alignItems: 'center', mt: 2, mx: 2 }}>

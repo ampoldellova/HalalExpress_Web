@@ -3,13 +3,22 @@ const Cart = require('../models/Cart')
 module.exports = {
     addFoodToCart: async (req, res) => {
         const userId = req.user.id;
-        const { foodId, totalPrice, quantity, additives, instructions } = req.body;
-
+        const { foodId, totalPrice, quantity, additives, instructions, restaurantId } = req.body;
+        // console.log(req.body)
         try {
             let cart = await Cart.findOne({ userId });
 
             if (cart) {
-                const existingItemIndex = cart.cartItems.findIndex(item => item.foodId.toString() === foodId);
+                // Check if the cart contains items from a different restaurant
+                console.log(cart.cartItems)
+                const differentRestaurantItemIndex = cart.cartItems.findIndex(item => item.foodId.restaurant.toString() !== restaurantId);
+                if (differentRestaurantItemIndex > -1) {
+                    // Remove items from a different restaurant
+                    cart.cartItems = cart.cartItems.filter(item => item.foodId.restaurant.toString() === restaurantId);
+                    cart.totalAmount = 0; // Reset total amount
+                }
+
+                const existingItemIndex = cart.cartItems.findIndex(item => item.foodId._id.toString() === foodId);
 
                 if (existingItemIndex > -1) {
                     cart.cartItems[existingItemIndex].quantity += quantity;
@@ -17,6 +26,7 @@ module.exports = {
                 } else {
                     cart.cartItems.push({
                         foodId,
+                        restaurantId,
                         additives,
                         instructions,
                         quantity,
@@ -31,6 +41,7 @@ module.exports = {
                     userId,
                     cartItems: [{
                         foodId,
+                        restaurantId,
                         additives,
                         instructions,
                         quantity,
@@ -58,7 +69,13 @@ module.exports = {
                 return res.status(404).json({ message: 'Cart not found' });
             }
 
+            const itemToRemove = cart.cartItems.find(item => item.foodId._id.toString() === foodId);
+            if (!itemToRemove) {
+                return res.status(404).json({ message: 'Food item not found in cart' });
+            }
+
             cart.cartItems = cart.cartItems.filter(item => item.foodId._id.toString() !== foodId);
+            cart.totalAmount -= itemToRemove.totalPrice;
 
             await cart.save();
             res.status(200).json({ message: 'Food item removed from cart', cart });

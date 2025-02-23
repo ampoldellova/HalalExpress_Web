@@ -7,6 +7,7 @@ import Dashboard from './screens/Admin/Dashboard';
 import { getUser } from './utils/helpers';
 import RestaurantPage from './screens/Vendors/RestaurantPage';
 import SupplierPage from './screens/Suppliers/SupplierPage';
+import Profile from './screens/User/Profile';
 
 function App() {
   const user = getUser();
@@ -20,6 +21,7 @@ function App() {
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/restaurant/:id" element={<RestaurantPage />} />
           <Route path="/supplier/:id" element={<SupplierPage />} />
+          <Route path="/profile/:id" element={<Profile />} />
         </Routes>
       </Router>
       <ToastContainer position='bottom-right' stacked limit={5} />

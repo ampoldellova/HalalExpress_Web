@@ -36,13 +36,15 @@ module.exports = {
     },
 
     updateUser: async (req, res) => {
-        // console.log(req.file)
+        console.log(req.file)
+        console.log(req.body)
         try {
             if (req.file) {
                 req.body.profile = await imageFile.uploadSingle({
                     imageFile: req.file,
                     request: req,
                 });
+                console.log(req.body.profile)
                 await User.findByIdAndUpdate(
                     req.user.id,
                     {
