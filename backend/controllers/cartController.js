@@ -94,7 +94,7 @@ module.exports = {
                 return res.status(404).json({ status: false, message: 'Cart not found' });
             }
 
-            res.status(200).json({ status: true, cartItems: cart.cartItems });
+            res.status(200).json({ status: true, cartItems: cart.cartItems, cart: cart });
         } catch (error) {
             res.status(500).json({ status: false, message: error.message });
         }

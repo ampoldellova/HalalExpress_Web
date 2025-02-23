@@ -1,4 +1,4 @@
-import { Box, Container, IconButton, Typography } from '@mui/material'
+import { Box, Button, Container, Divider, IconButton, Typography } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { getToken, getUser } from '../../utils/helpers'
@@ -27,6 +27,7 @@ const COLORS = {
 };
 
 const CartDrawer = ({ onClick }) => {
+    const [cart, setCart] = useState([])
     const [cartItems, setCartItems] = useState([])
     const [vendorCartItems, setVendorCartItems] = useState([])
     const token = getToken();
@@ -44,13 +45,14 @@ const CartDrawer = ({ onClick }) => {
 
                 const response = await axios.get(`http://localhost:6002/api/cart/`, config)
                 setCartItems(response.data.cartItems)
+                setCart(response.data.cart)
             } else {
                 console.log('No token found')
             }
         } catch (error) {
             console.log(error.message)
         }
-    }
+    };
 
     const getVendorCartItems = async () => {
         try {
@@ -70,7 +72,7 @@ const CartDrawer = ({ onClick }) => {
         } catch (error) {
             console.log(error.message)
         }
-    }
+    };
 
     const removeFoodFromCart = async (foodId) => {
         try {
@@ -205,7 +207,7 @@ const CartDrawer = ({ onClick }) => {
 
     useEffect(() => {
         { user && user.userType === 'Vendor' ? getVendorCartItems() : getCartItems() }
-    }, [user]);
+    }, []);
 
     return (
         <Box sx={{ width: 500 }}>
@@ -270,7 +272,7 @@ const CartDrawer = ({ onClick }) => {
                                         {cartItems.map((item) => (
                                             <Box sx={{ display: 'flex', mt: 5 }}>
                                                 <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 100, width: 100, borderRadius: 5, objectFit: 'cover', mr: 2 }} />
-                                                <Box>
+                                                <Box width='100%'>
                                                     <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>{item.foodId.title}</Typography>
                                                     {item.additives.length > 0 ? (
                                                         <>
@@ -283,24 +285,37 @@ const CartDrawer = ({ onClick }) => {
                                                             <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>No additives</Typography>
                                                         </>
                                                     )}
-                                                    <Box sx={{ display: 'flex', mt: 2, borderWidth: 1, borderColor: COLORS.gray, borderRadius: 8, borderStyle: 'solid', padding: 0.5, width: 90, justifyContent: 'center' }}>
-                                                        {item.quantity === 1 ? (
-                                                            <IconButton sx={{ padding: 0 }} onClick={() => removeFoodFromCart(item.foodId._id)}>
-                                                                <DeleteOutlineOutlinedIcon />
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                        <Box sx={{ display: 'flex', mt: 2, borderWidth: 1, borderColor: COLORS.gray, borderRadius: 8, borderStyle: 'solid', padding: 0.5, width: 90, justifyContent: 'center' }}>
+                                                            {item.quantity === 1 ? (
+                                                                <IconButton sx={{ padding: 0 }} onClick={() => removeFoodFromCart(item.foodId._id)}>
+                                                                    <DeleteOutlineOutlinedIcon />
+                                                                </IconButton>
+                                                            ) : (
+                                                                <IconButton sx={{ padding: 0 }} onClick={() => decrementFoodQuantity(item.foodId._id)}>
+                                                                    <RemoveCircleOutlineOutlinedIcon />
+                                                                </IconButton>
+                                                            )}
+                                                            <Typography sx={{ fontFamily: 'regular', fontSize: 18, mx: 2 }}>{item.quantity}</Typography>
+                                                            <IconButton sx={{ padding: 0 }} onClick={() => incrementFoodQuantity(item.foodId._id)}>
+                                                                <AddCircleOutlineIcon />
                                                             </IconButton>
-                                                        ) : (
-                                                            <IconButton sx={{ padding: 0 }} onClick={() => decrementFoodQuantity(item.foodId._id)}>
-                                                                <RemoveCircleOutlineOutlinedIcon />
-                                                            </IconButton>
-                                                        )}
-                                                        <Typography sx={{ fontFamily: 'regular', fontSize: 18, mx: 2 }}>{item.quantity}</Typography>
-                                                        <IconButton sx={{ padding: 0 }} onClick={() => incrementFoodQuantity(item.foodId._id)}>
-                                                            <AddCircleOutlineIcon />
-                                                        </IconButton>
+                                                        </Box>
+                                                        <Box>
+                                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18, mt: 2 }}>₱ {item.totalPrice}</Typography>
+                                                        </Box>
                                                     </Box>
                                                 </Box>
                                             </Box>
                                         ))}
+                                        <Divider sx={{ mt: 5 }} />
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>Total: </Typography>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>₱ {cart.totalAmount.toFixed(2)}</Typography>
+                                        </Box>
+                                        <Button variant='contained' sx={{ width: '100%', mt: 2, backgroundColor: COLORS.primary, color: COLORS.white, fontFamily: 'bold', borderRadius: 8 }}>
+                                            C H E C K O U T
+                                        </Button>
                                     </>
                                 ) : (
                                     <>
