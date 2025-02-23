@@ -111,9 +111,10 @@ module.exports = {
                 const existingItemIndex = cart.cartItems.findIndex(item => item.foodId._id.toString() === foodId);
 
                 if (existingItemIndex > -1) {
-                    cart.cartItems[existingItemIndex].quantity += 1;
-                    cart.cartItems[existingItemIndex].totalPrice += cart.cartItems[existingItemIndex].totalPrice / (cart.cartItems[existingItemIndex].quantity - 1);
-                    cart.totalAmount += cart.cartItems[existingItemIndex].totalPrice / cart.cartItems[existingItemIndex].quantity;
+                    const item = cart.cartItems[existingItemIndex];
+                    item.quantity += 1;
+                    item.totalPrice += item.foodId.price;
+                    cart.totalAmount += item.foodId.price;
 
                     await cart.save();
                     return res.status(200).json({ status: true, message: 'Quantity incremented successfully' });
