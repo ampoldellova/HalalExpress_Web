@@ -302,7 +302,7 @@ const CartDrawer = ({ onClick }) => {
                                                             </IconButton>
                                                         </Box>
                                                         <Box>
-                                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18, mt: 2 }}>₱ {item.totalPrice}</Typography>
+                                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18, mt: 2 }}>₱ {item.totalPrice.toFixed(2)}</Typography>
                                                         </Box>
                                                     </Box>
                                                 </Box>
