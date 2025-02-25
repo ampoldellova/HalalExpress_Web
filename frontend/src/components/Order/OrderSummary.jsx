@@ -21,9 +21,12 @@ const OrderSummary = ({ restaurant, cart }) => {
     return (
         <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: '100%' }}>
             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Your order from</Typography>
-            <Typography sx={{ fontFamily: 'medium', fontSize: 16, mb: 2 }}>{restaurant?.title}</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box component='img' src={restaurant?.logoUrl.url} sx={{ width: 20, height: 20, objectFit: 'cover', borderRadius: 1 }} />
+                <Typography sx={{ fontFamily: 'medium', fontSize: 16, ml: 1 }}>{restaurant?.title}</Typography>
+            </Box>
 
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ my: 4 }}>
                 {cart?.cartItems.map((item) => (
                     <>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
