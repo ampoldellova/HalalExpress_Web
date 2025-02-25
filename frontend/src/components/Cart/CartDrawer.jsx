@@ -9,6 +9,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const COLORS = {
     primary: "#30b9b2",
@@ -27,6 +28,7 @@ const COLORS = {
 };
 
 const CartDrawer = ({ onClick }) => {
+    const navigate = useNavigate()
     const [cart, setCart] = useState([])
     const [cartItems, setCartItems] = useState([])
     const [vendorCartItems, setVendorCartItems] = useState([])
@@ -223,7 +225,7 @@ const CartDrawer = ({ onClick }) => {
                                             <Typography sx={{ fontFamily: 'bold', textAlign: 'center', mt: 3, fontSize: 24 }} >Your Cart</Typography>
                                         </Box>
                                         {vendorCartItems.map((item) => (
-                                            <Box sx={{ display: 'flex', mt: 5 }}>
+                                            <Box sx={{ display: 'flex', mt: 5 }} key={item.productId._id}>
                                                 <Box component='img' src={item.productId.imageUrl.url} sx={{ height: 100, width: 100, borderRadius: 5, objectFit: 'cover', mr: 2 }} />
                                                 <Box>
                                                     <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>{item.productId.title}</Typography>
@@ -270,7 +272,7 @@ const CartDrawer = ({ onClick }) => {
                                             <Typography sx={{ fontFamily: 'bold', textAlign: 'center', mt: 3, fontSize: 24 }} >Your Cart</Typography>
                                         </Box>
                                         {cartItems.map((item) => (
-                                            <Box sx={{ display: 'flex', mt: 5 }}>
+                                            <Box sx={{ display: 'flex', mt: 5 }} key={item.foodId._id}>
                                                 <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 100, width: 100, borderRadius: 5, objectFit: 'cover', mr: 2 }} />
                                                 <Box width='100%'>
                                                     <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>{item.foodId.title}</Typography>
@@ -313,8 +315,9 @@ const CartDrawer = ({ onClick }) => {
                                             <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>Total: </Typography>
                                             <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>₱ {cart.totalAmount.toFixed(2)}</Typography>
                                         </Box>
-                                        <Button variant='contained' sx={{ width: '100%', mt: 2, backgroundColor: COLORS.primary, color: COLORS.white, fontFamily: 'bold', borderRadius: 8, height: 50, fontSize: 18 }}>
+                                        <Button onClick={() => { navigate(`/checkout/${cart._id}`, { state: { cart } }); onClick() }} variant='contained' sx={{ width: '100%', mt: 2, backgroundColor: COLORS.primary, color: COLORS.white, fontFamily: 'bold', borderRadius: 8, height: 50, fontSize: 18 }}>
                                             C H E C K O U T
+                                            {console.log(cart)}
                                         </Button>
                                     </>
                                 ) : (
