@@ -19,7 +19,7 @@ const COLORS = {
 
 const OrderSummary = ({ restaurant, cart }) => {
     return (
-        <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: '100%' }}>
+        <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: 400 }}>
             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Your order from</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Box component='img' src={restaurant?.logoUrl.url} sx={{ width: 20, height: 20, objectFit: 'cover', borderRadius: 1 }} />
@@ -66,7 +66,7 @@ const OrderSummary = ({ restaurant, cart }) => {
             <Divider />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                 <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Total:</Typography>
-                <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>₱ 000</Typography>
+                <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>₱ 0.00</Typography>
             </Box>
         </Box>
     )
