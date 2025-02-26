@@ -86,6 +86,9 @@ const Profile = () => {
             });
 
             if (response.status === 201) {
+                // console.log(response.data);
+                await sessionStorage.removeItem('user');
+                await sessionStorage.setItem('user', JSON.stringify(response.data.data));
                 toast.success('Profile updated successfully');
                 setLoading(false);
             } else {

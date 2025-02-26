@@ -36,8 +36,8 @@ module.exports = {
     },
 
     updateUser: async (req, res) => {
-        console.log(req.file)
-        console.log(req.body)
+        // console.log(req.file)
+        // console.log(req.body)
         try {
             if (req.file) {
                 req.body.profile = await imageFile.uploadSingle({
@@ -45,7 +45,7 @@ module.exports = {
                     request: req,
                 });
                 console.log(req.body.profile)
-                await User.findByIdAndUpdate(
+                const data = await User.findByIdAndUpdate(
                     req.user.id,
                     {
                         username: req.body.username,
@@ -58,12 +58,12 @@ module.exports = {
                         runValidators: true,
                     }
                 );
-                res.status(201).json({ success: true, message: "User is Updated" });
+                res.status(201).json({ success: true, message: "User is Updated", data });
             } else {
-                await User.findByIdAndUpdate(req.user.id, req.body, {
+                const a = await User.findByIdAndUpdate(req.user.id, req.body, {
                     new: true,
-                    runValidators: true,
                 });
+                
                 res.status(201).json({ success: true, message: "User is Updated" });
             }
         } catch (err) {
