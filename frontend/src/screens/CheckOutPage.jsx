@@ -11,6 +11,8 @@ import { getUser } from '../utils/helpers';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import Gcash from '../assets/images/gcash.png';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddAddressModal from '../components/Users/AddAddressModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -34,8 +36,10 @@ const CheckOutPage = () => {
     const { cart } = location.state;
     const [restaurant, setRestaurant] = useState(null);
     const [addresses, setAddresses] = useState([]);
+    const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
 
-    // console.log(cart.cartItems[0].foodId.restaurant)
+    const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
+    const handleCloseAddAddressModal = () => setOpenAddAddressModal(false);
 
     const fetchRestaurant = async () => {
         if (cart?.cartItems.length > 0) {
@@ -93,6 +97,33 @@ const CheckOutPage = () => {
                                 </Box>
                             </Box>
                         ))}
+                        <Box
+                            sx={{
+                                mb: 2,
+                                border: 1,
+                                borderRadius: 3,
+                                p: 2,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexDirection: 'row',
+                                borderColor: COLORS.gray2,
+                                color: COLORS.gray,
+                                '&:hover': {
+                                    borderColor: COLORS.black,
+                                    color: COLORS.black,
+                                    '& .icon, & .text': {
+                                        color: COLORS.black,
+                                    },
+                                },
+                            }}
+                            onClick={handleOpenAddAddressModal}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <AddCircleOutlineIcon className="icon" sx={{ mr: 1, color: COLORS.gray, cursor: 'pointer' }} />
+                                <Typography className="text" sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>Add address</Typography>
+                            </Box>
+                        </Box>
                         <TextField
                             multiline
                             fullWidth
@@ -182,7 +213,7 @@ const CheckOutPage = () => {
                         </Box>
                     </Box>
 
-                    <Button variant='contained' sx={{ my: 4, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', fontSize: 16 }}>
+                    <Button variant='contained' sx={{ my: 4, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', fontSize: 16, height: 50, borderRadius: 8 }}>
                         {'P L A C E   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
                     </Button>
                 </Grid2>
@@ -229,7 +260,7 @@ const CheckOutPage = () => {
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
                             <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>Delivery Fee:</Typography>
-                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>₱ {cart?.totalAmount.toFixed(2)}</Typography>
+                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>₱ 0.00</Typography>
 
                         </Box>
                         <Divider />
@@ -240,6 +271,7 @@ const CheckOutPage = () => {
                     </Box>
                 </Grid2>
             </Grid2 >
+            <AddAddressModal open={openAddAddressModal} onClose={handleCloseAddAddressModal} />
         </Container >
     );
 };
