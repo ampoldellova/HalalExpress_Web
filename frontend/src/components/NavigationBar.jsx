@@ -127,7 +127,7 @@ export default function NavigationBar() {
                                         }
                                     </Button>
                                     <IconButton color="inherit" onClick={toggleCart(true)}>
-                                        {cart?.cartItems.length > 0 ? (
+                                        {cart?.cartItems?.length > 0 ? (
                                             <Badge badgeContent={cart?.cartItems?.length} color="primary">
                                                 <LocalMallOutlinedIcon sx={styles.cartIcon} />
                                             </Badge>

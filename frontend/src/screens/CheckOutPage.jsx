@@ -2,7 +2,7 @@ import { Box, Button, Card, CardActions, CardContent, Container, Divider, Grid2,
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import OrderSummary from '../components/Order/OrderSummary';
+import cash from '../assets/images/COD.png';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -10,6 +10,7 @@ import locationImage from '../assets/images/location.png';
 import { getUser } from '../utils/helpers';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import Gcash from '../assets/images/gcash.png';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -142,19 +143,19 @@ const CheckOutPage = () => {
                         </Box>
                     </Box>
 
-                    <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 } }}>
+                    <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Personal Details</Typography>
                             <Button sx={{ ml: 'auto', textTransform: 'none', fontFamily: 'regular', fontSize: 16, color: COLORS.black }} startIcon={<EditOutlinedIcon />} >Edit</Button>
 
                         </Box>
                         <Box sx={{ mt: 2, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
-                            <Person2OutlinedIcon sx={{ color: COLORS.gray, mr: 1  }} />
+                            <Person2OutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
                             <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}> {user?.username}</Typography>
                         </Box>
                         <Box sx={{ mt: 1, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
 
-                            <EmailOutlinedIcon sx={{ color: COLORS.gray, mr: 1  }} />
+                            <EmailOutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
                             <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>{user?.email}</Typography>
                         </Box>
                         <Box sx={{ mt: 1, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
@@ -163,7 +164,29 @@ const CheckOutPage = () => {
                         </Box>
                     </Box>
 
+                    <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 } }}>
+                        <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Payment Options</Typography>
+                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Radio sx={{ p: 0 }} />
+                                <Box component='img' src={cash} sx={{ width: 30, height: 30, mx: 1 }} />
+                                <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>Cash On Delivery</Typography>
+                            </Box>
+                        </Box>
+                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Radio sx={{ p: 0 }} />
+                                <Box component='img' src={Gcash} sx={{ width: 35, height: 30, mx: 1 }} />
+                                <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>GCash</Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+
+                    <Button variant='contained' sx={{ my: 4, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', fontSize: 16 }}>
+                        {'P L A C E   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
+                    </Button>
                 </Grid2>
+
                 <Grid2 item xs={12} md={6} >
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 400 } }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Your order from</Typography>
