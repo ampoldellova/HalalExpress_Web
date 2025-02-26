@@ -229,26 +229,29 @@ const CheckOutPage = () => {
                         <Box sx={{ my: 4 }}>
                             {cart?.cartItems.map((item) => (
                                 <>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>{item.quantity}x {item.foodId.title}</Typography>
-                                        <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>₱ {item.totalPrice.toFixed(2)}</Typography>
-                                    </Box>
-                                    <Box>
-                                        {item.additives.length > 0 ? (
-                                            <>
-                                                {item.additives.map((additive) => (
+                                    <Box sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}>
+                                        <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 50, width: 50, objectFit: 'cover', borderRadius: 3, mr: 1 }} />
+                                        <Box>
+                                            <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>{item.quantity}x {item.foodId.title}</Typography>
+                                            {item.additives.length > 0 ? (
+                                                <>
+                                                    {item.additives.map((additive) => (
+                                                        < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
+                                                            + {additive.title}
+                                                        </Typography>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <>
                                                     < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
-                                                        + {additive.title}
+                                                        - No additives
                                                     </Typography>
-                                                ))}
-                                            </>
-                                        ) : (
-                                            <>
-                                                < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
-                                                    - No additives
-                                                </Typography>
-                                            </>
-                                        )}
+                                                </>
+                                            )}
+                                        </Box>
+                                        <Box sx={{ ml: 'auto' }}>
+                                            <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>₱ {item.totalPrice.toFixed(2)}</Typography>
+                                        </Box>
                                     </Box>
                                 </>
                             ))}
