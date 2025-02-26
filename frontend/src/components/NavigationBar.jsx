@@ -9,7 +9,7 @@ import logo from '../assets/images/icon.png';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Container, Drawer, Grid2, Menu, MenuItem } from '@mui/material';
+import { Badge, Container, Drawer, Grid2, Menu, MenuItem } from '@mui/material';
 import { getToken, getUser, logout } from '../utils/helpers';
 import SignUpModal from './Users/SignUpModal';
 import LoginModal from './Users/LoginModal';
@@ -18,6 +18,8 @@ import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined
 import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined';
 import { useNavigate } from 'react-router-dom';
 import CartDrawer from './Cart/CartDrawer';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -41,6 +43,7 @@ export default function NavigationBar() {
     const [openCart, setOpenCart] = React.useState(false);
     const [openSignUp, setOpenSignUp] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [cart, setCart] = React.useState([]);
 
     const toggleCart = (newOpen) => () => {
         setOpenCart(newOpen);
@@ -53,6 +56,26 @@ export default function NavigationBar() {
     const handleCloseLogin = () => setOpenLogin(false);
     const handleOpenSignUp = () => setOpenSignUp(true);
     const handleCloseSignUp = () => setOpenSignUp(false);
+
+    const getCartItems = async () => {
+        try {
+            const token = await sessionStorage.getItem('token')
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                const response = await axios.get(`http://localhost:6002/api/cart/`, config)
+                setCart(response.data.cart)
+            } else {
+                console.log('No token found')
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    };
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -70,6 +93,10 @@ export default function NavigationBar() {
     const cartDrawerElement = (
         <CartDrawer onClick={toggleCart(false)} />
     );
+
+    useEffect(() => {
+        getCartItems();
+    }, [cart]);
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -100,7 +127,13 @@ export default function NavigationBar() {
                                         }
                                     </Button>
                                     <IconButton color="inherit" onClick={toggleCart(true)}>
-                                        <LocalMallOutlinedIcon sx={styles.cartIcon} />
+                                        {cart?.cartItems.length > 0 ? (
+                                            <Badge badgeContent={cart?.cartItems?.length} color="primary">
+                                                <LocalMallOutlinedIcon sx={styles.cartIcon} />
+                                            </Badge>
+                                        ) : (
+                                            <LocalMallOutlinedIcon sx={styles.cartIcon} />
+                                        )}
                                     </IconButton>
                                 </Grid2>
                                 <Menu
