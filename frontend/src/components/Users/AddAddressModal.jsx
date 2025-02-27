@@ -1,4 +1,4 @@
-import { Box, Button, InputAdornment, Modal, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, InputAdornment, Modal, TextField, Typography } from '@mui/material'
 import location from '../../assets/images/location.png'
 import React from 'react'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
@@ -6,6 +6,8 @@ import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 import AddAddressMapDisplay from './AddAddressMapDisplay';
 import { useState } from 'react';
 import AddressSuggestions from './AddressSuggestions';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const containerStyle = {
     width: 'auto',
@@ -29,9 +31,10 @@ const COLORS = {
     lightWhite: "#FAFAFC",
 };
 
-const AddAddressModal = ({ open, onClose }) => {
+const AddAddressModal = ({ open, onClose, fetchUserAddresses }) => {
     const [suggestions, setSuggestions] = useState([]);
     const [address, setAddress] = useState('');
+    const [loader, setLoader] = useState(false);
     const [region, setRegion] = useState({
         latitude: 14.509708499999999,
         longitude: 121.0359409655718,
@@ -60,6 +63,37 @@ const AddAddressModal = ({ open, onClose }) => {
             longitudeDelta: 0.001,
         });
     }
+
+    const addAddress = async () => {
+        setLoader(true);
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    },
+                };
+
+                const data = {
+                    address: address,
+                    latitude: region.latitude,
+                    longitude: region.longitude,
+                };
+
+                await axios.post(`http://localhost:6002/api/users/address`, data, config);
+                setLoader(false);
+                fetchUserAddresses();
+                toast.success('Address added successfully');
+                onClose();
+            } else {
+                console.log('Authorization token not found');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <Modal
@@ -131,8 +165,12 @@ const AddAddressModal = ({ open, onClose }) => {
                 <AddressSuggestions suggestions={suggestions} onSuggestionPress={handleSuggestionPress} />
                 <AddAddressMapDisplay region={region} />
 
-                <Button sx={{ mt: 2, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, borderRadius: 8, fontFamily: 'bold', fontSize: 16, height: 50 }}>
-                    {'S U B M I T   A D D R E S S'.split(' ').join('\u00A0\u00A0\u00A0')}
+                <Button onClick={addAddress} sx={{ mt: 2, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, borderRadius: 8, fontFamily: 'bold', fontSize: 16, height: 50 }}>
+                    {loader ? (
+                        <CircularProgress sx={{ color: COLORS.white }} size={24} />
+                    ) : (
+                        'S U B M I T   A D D R E S S'.split(' ').join('\u00A0\u00A0\u00A0')
+                    )}
                 </Button>
             </Box>
         </Modal>

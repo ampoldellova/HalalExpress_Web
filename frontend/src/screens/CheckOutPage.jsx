@@ -274,7 +274,7 @@ const CheckOutPage = () => {
                     </Box>
                 </Grid2>
             </Grid2 >
-            <AddAddressModal open={openAddAddressModal} onClose={handleCloseAddAddressModal} />
+            <AddAddressModal open={openAddAddressModal} onClose={handleCloseAddAddressModal} fetchUserAddresses={fetchUserAddresses} />
         </Container >
     );
 };
