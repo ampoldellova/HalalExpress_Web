@@ -5,6 +5,7 @@ const containerStyle = {
     width: 'auto',
     height: '400px',
     borderRadius: 15,
+    marginTop: 20,
 }
 
 const AddAddressMapDisplay = () => {

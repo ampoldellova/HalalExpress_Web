@@ -4,6 +4,8 @@ import React from 'react'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 import AddAddressMapDisplay from './AddAddressMapDisplay';
+import { useState } from 'react';
+import AddressSuggestions from './AddressSuggestions';
 
 const containerStyle = {
     width: 'auto',
@@ -28,6 +30,25 @@ const COLORS = {
 };
 
 const AddAddressModal = ({ open, onClose }) => {
+    const [suggestions, setSuggestions] = useState([]);
+    const [address, setAddress] = useState('');
+
+    const fetchSuggestions = async (text) => {
+        const response = await fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&format=json&apiKey=7540990e27fa4d198afeb6d69d3c048e`);
+        const data = await response.json();
+        setSuggestions(data.results);
+    };
+
+    const handleAddressChange = (e) => {
+        setAddress(e.target.value);
+        fetchSuggestions(e.target.value);
+    }
+
+    const handleSuggestionPress = (suggestion) => {
+        setAddress(suggestion.formatted);
+        setSuggestions([]);
+    }
+
     return (
         <Modal
             open={open}
@@ -48,6 +69,8 @@ const AddAddressModal = ({ open, onClose }) => {
 
                 <TextField
                     placeholder='Enter Address'
+                    onChange={(text) => handleAddressChange(text)}
+                    value={address}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -70,7 +93,6 @@ const AddAddressModal = ({ open, onClose }) => {
                     }}
                     sx={{
                         width: '100%',
-                        mb: 2,
                         '& .MuiOutlinedInput-root': {
                             bgcolor: COLORS.offwhite,
                             borderRadius: 8,
@@ -93,7 +115,7 @@ const AddAddressModal = ({ open, onClose }) => {
                         },
                     }}
                 />
-
+                <AddressSuggestions suggestions={suggestions} onSuggestionPress={handleSuggestionPress} />
                 <AddAddressMapDisplay />
 
                 <Button sx={{ mt: 2, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, borderRadius: 8, fontFamily: 'bold', fontSize: 16, height: 50 }}>
@@ -114,6 +136,5 @@ const style = {
     width: 500,
     bgcolor: 'background.paper',
     borderRadius: 8,
-    boxShadow: 24,
     p: 4,
 };
