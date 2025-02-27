@@ -8,7 +8,7 @@ const containerStyle = {
     marginTop: 20,
 }
 
-const AddAddressMapDisplay = () => {
+const AddAddressMapDisplay = ({ region }) => {
 
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
@@ -30,8 +30,8 @@ const AddAddressMapDisplay = () => {
     }, [])
 
     const center = {
-        lat: 14.509708499999999 || 0,
-        lng: 121.0359409655718 || 0,
+        lat: region?.latitude || 0,
+        lng: region?.longitude || 0,
     }
 
     return isLoaded ? (

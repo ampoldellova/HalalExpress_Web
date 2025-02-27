@@ -32,6 +32,12 @@ const COLORS = {
 const AddAddressModal = ({ open, onClose }) => {
     const [suggestions, setSuggestions] = useState([]);
     const [address, setAddress] = useState('');
+    const [region, setRegion] = useState({
+        latitude: 14.509708499999999,
+        longitude: 121.0359409655718,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+    })
 
     const fetchSuggestions = async (text) => {
         const response = await fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&format=json&apiKey=7540990e27fa4d198afeb6d69d3c048e`);
@@ -47,6 +53,12 @@ const AddAddressModal = ({ open, onClose }) => {
     const handleSuggestionPress = (suggestion) => {
         setAddress(suggestion.formatted);
         setSuggestions([]);
+        setRegion({
+            latitude: suggestion.lat,
+            longitude: suggestion.lon,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
+        });
     }
 
     return (
@@ -70,6 +82,7 @@ const AddAddressModal = ({ open, onClose }) => {
                 <TextField
                     placeholder='Enter Address'
                     onChange={(text) => handleAddressChange(text)}
+                    autoComplete='off'
                     value={address}
                     InputProps={{
                         startAdornment: (
@@ -116,7 +129,7 @@ const AddAddressModal = ({ open, onClose }) => {
                     }}
                 />
                 <AddressSuggestions suggestions={suggestions} onSuggestionPress={handleSuggestionPress} />
-                <AddAddressMapDisplay />
+                <AddAddressMapDisplay region={region} />
 
                 <Button sx={{ mt: 2, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, borderRadius: 8, fontFamily: 'bold', fontSize: 16, height: 50 }}>
                     {'S U B M I T   A D D R E S S'.split(' ').join('\u00A0\u00A0\u00A0')}
