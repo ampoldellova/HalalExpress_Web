@@ -5,14 +5,15 @@ import { useLocation } from 'react-router-dom';
 import cash from '../assets/images/COD.png';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import locationImage from '../assets/images/location.png';
 import { getUser } from '../utils/helpers';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import Gcash from '../assets/images/gcash.png';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddAddressModal from '../components/Users/AddAddressModal';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import locationImage from '../assets/images/location.png';
+import DeleteAddressModal from '../components/Users/DeleteAddressModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -70,7 +71,7 @@ const CheckOutPage = () => {
             console.error('Error fetching user addresses:', error);
         }
     };
-    console.log(addresses);
+
     useEffect(() => {
         fetchUserAddresses();
         fetchRestaurant();
@@ -84,19 +85,20 @@ const CheckOutPage = () => {
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Address</Typography>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 16, mb: 2 }}>Saved addresses: </Typography>
                         {addresses.map((address) => (
+                            // <Addresses address={address} fetchUserAddresses={fetchUserAddresses} />
                             <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
-
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Radio sx={{ p: 0 }} />
                                     <Box component='img' src={locationImage} sx={{ width: 20, height: 20, mx: 1 }} />
-                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>{address.address}</Typography>
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, width: 450 }}>{address.address}</Typography>
                                 </Box>
-                                <Box>
-                                    <EditOutlinedIcon sx={{ mr: 1 }} />
-                                    <DeleteOutlineOutlinedIcon />
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <EditOutlinedIcon sx={{ mr: 1, cursor: 'pointer' }} />
+                                    <DeleteAddressModal address={address} fetchUserAddresses={fetchUserAddresses} />
                                 </Box>
                             </Box>
                         ))}
+
                         <Box
                             sx={{
                                 mb: 2,
@@ -109,6 +111,7 @@ const CheckOutPage = () => {
                                 flexDirection: 'row',
                                 borderColor: COLORS.gray2,
                                 color: COLORS.gray,
+                                cursor: 'pointer',
                                 '&:hover': {
                                     borderColor: COLORS.black,
                                     color: COLORS.black,
@@ -120,8 +123,8 @@ const CheckOutPage = () => {
                             onClick={handleOpenAddAddressModal}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <AddCircleOutlineIcon className="icon" sx={{ mr: 1, color: COLORS.gray, cursor: 'pointer' }} />
-                                <Typography className="text" sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>Add address</Typography>
+                                <AddCircleOutlineIcon className='icon' sx={{ mr: 1, color: COLORS.gray }} />
+                                <Typography className='text' sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>Add address</Typography>
                             </Box>
                         </Box>
                         <TextField
