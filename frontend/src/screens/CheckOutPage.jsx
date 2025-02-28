@@ -11,9 +11,9 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import Gcash from '../assets/images/gcash.png';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddAddressModal from '../components/Users/AddAddressModal';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import locationImage from '../assets/images/location.png';
 import DeleteAddressModal from '../components/Users/DeleteAddressModal';
+import EditAddressModal from '../components/Users/EditAddressModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -84,8 +84,8 @@ const CheckOutPage = () => {
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Address</Typography>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 16, mb: 2 }}>Saved addresses: </Typography>
+
                         {addresses.map((address) => (
-                            // <Addresses address={address} fetchUserAddresses={fetchUserAddresses} />
                             <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Radio sx={{ p: 0 }} />
@@ -93,7 +93,7 @@ const CheckOutPage = () => {
                                     <Typography sx={{ fontFamily: 'regular', fontSize: 14, width: 450 }}>{address.address}</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <EditOutlinedIcon sx={{ mr: 1, cursor: 'pointer' }} />
+                                    <EditAddressModal userAddress={address} fetchUserAddresses={fetchUserAddresses} />
                                     <DeleteAddressModal address={address} fetchUserAddresses={fetchUserAddresses} />
                                 </Box>
                             </Box>
@@ -127,6 +127,7 @@ const CheckOutPage = () => {
                                 <Typography className='text' sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>Add address</Typography>
                             </Box>
                         </Box>
+
                         <TextField
                             multiline
                             fullWidth
@@ -158,6 +159,7 @@ const CheckOutPage = () => {
                                 },
                             }}
                         />
+
                     </Box>
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
