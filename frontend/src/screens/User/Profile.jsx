@@ -177,7 +177,7 @@ const Profile = () => {
                             Email
                         </Typography>
                         <TextField
-                            placeholder='Enter Username'
+                            placeholder='Enter Email'
                             variant="outlined"
                             name="email"
                             value={email}
@@ -228,7 +228,7 @@ const Profile = () => {
                             Phone Number
                         </Typography>
                         <TextField
-                            placeholder='Enter Username'
+                            placeholder='Enter Phone Number'
                             variant="outlined"
                             name="email"
                             value={phone}

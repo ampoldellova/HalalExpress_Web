@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, Container, Divider, Grid2, Radio, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, Container, Divider, Grid, Grid2, InputAdornment, Radio, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -14,6 +14,7 @@ import AddAddressModal from '../components/Users/AddAddressModal';
 import locationImage from '../assets/images/location.png';
 import DeleteAddressModal from '../components/Users/DeleteAddressModal';
 import EditAddressModal from '../components/Users/EditAddressModal';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -37,6 +38,7 @@ const CheckOutPage = () => {
     const { cart } = location.state;
     const [restaurant, setRestaurant] = useState(null);
     const [addresses, setAddresses] = useState([]);
+    const [editUserDetails, setEditUserDetails] = useState(false);
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
 
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
@@ -76,6 +78,8 @@ const CheckOutPage = () => {
         fetchUserAddresses();
         fetchRestaurant();
     }, [cart]);
+
+    console.log(editUserDetails);
 
     return (
         <Container maxWidth='lg'>
@@ -182,22 +186,226 @@ const CheckOutPage = () => {
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Personal Details</Typography>
-                            <Button sx={{ ml: 'auto', textTransform: 'none', fontFamily: 'regular', fontSize: 16, color: COLORS.black }} startIcon={<EditOutlinedIcon />} >Edit</Button>
 
+                            {editUserDetails ? (
+                                <Button
+                                    sx={{
+                                        ml: 'auto',
+                                        textTransform: 'none',
+                                        fontFamily: 'regular',
+                                        fontSize: 16,
+                                        color: COLORS.black,
+                                        '&:hover': {
+                                            backgroundColor: 'transparent',
+                                            color: COLORS.black,
+                                        },
+                                    }}
+                                    startIcon={<CloseOutlinedIcon />}
+                                    onClick={() => setEditUserDetails(false)}
+                                    disableRipple
+                                >
+                                    Cancel
+                                </Button>
+                            ) : (
+                                <Button
+                                    sx={{
+                                        ml: 'auto',
+                                        textTransform: 'none',
+                                        fontFamily: 'regular',
+                                        fontSize: 16,
+                                        color: COLORS.black,
+                                        '&:hover': {
+                                            backgroundColor: 'transparent',
+                                            color: COLORS.black,
+                                        },
+                                    }}
+                                    startIcon={<EditOutlinedIcon />}
+                                    onClick={() => setEditUserDetails(true)}
+                                    disableRipple
+                                >
+                                    Edit
+                                </Button>
+                            )}
                         </Box>
-                        <Box sx={{ mt: 2, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
-                            <Person2OutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
-                            <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}> {user?.username}</Typography>
-                        </Box>
-                        <Box sx={{ mt: 1, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
 
-                            <EmailOutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
-                            <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>{user?.email}</Typography>
-                        </Box>
-                        <Box sx={{ mt: 1, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
-                            <LocalPhoneOutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
-                            <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>+{user?.phone}</Typography>
-                        </Box>
+                        {editUserDetails ? (
+                            <>
+                                <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 2 }}>
+                                    Username
+                                </Typography>
+                                <TextField
+                                    placeholder='Enter Username'
+                                    variant="outlined"
+                                    name="email"
+                                    autoComplete="off"
+                                    fullWidth
+                                    value={user?.username}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Person2OutlinedIcon />
+                                            </InputAdornment>
+                                        ),
+                                        sx: {
+                                            '& input': {
+                                                fontFamily: 'regular',
+                                                fontSize: 16,
+                                                '&::placeholder': {
+                                                    fontFamily: 'regular',
+                                                    fontSize: 16
+                                                },
+                                            },
+                                        },
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: false,
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            bgcolor: COLORS.white,
+                                            borderRadius: 8,
+                                            '& fieldset': {
+                                                borderColor: COLORS.offwhite,
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: COLORS.secondary,
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: COLORS.secondary,
+                                            },
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            fontFamily: 'regular',
+                                            fontSize: 16,
+                                        },
+                                    }}
+                                />
+
+                                <Box sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between' }} >
+                                    <Box sx={{ width: '49%' }}>
+                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 3 }}>
+                                            Email
+                                        </Typography>
+                                        <TextField
+                                            placeholder='Enter Email'
+                                            variant="outlined"
+                                            name="email"
+                                            autoComplete="off"
+                                            fullWidth
+                                            value={user?.email}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <EmailOutlinedIcon />
+                                                    </InputAdornment>
+                                                ),
+                                                sx: {
+                                                    '& input': {
+                                                        fontFamily: 'regular',
+                                                        fontSize: 16,
+                                                        '&::placeholder': {
+                                                            fontFamily: 'regular',
+                                                            fontSize: 16
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: false,
+                                            }}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    bgcolor: COLORS.white,
+                                                    borderRadius: 8,
+                                                    '& fieldset': {
+                                                        borderColor: COLORS.offwhite,
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: COLORS.secondary,
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: COLORS.secondary,
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    fontFamily: 'regular',
+                                                    fontSize: 16,
+                                                },
+                                            }}
+                                        />
+                                    </Box>
+
+                                    <Box sx={{ width: '49%' }}>
+                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 3 }}>
+                                            Phone Number
+                                        </Typography>
+                                        <TextField
+                                            placeholder='Enter Phone Number'
+                                            variant="outlined"
+                                            name="email"
+                                            autoComplete="off"
+                                            fullWidth
+                                            value={user?.phone}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <LocalPhoneOutlinedIcon />
+                                                    </InputAdornment>
+                                                ),
+                                                sx: {
+                                                    '& input': {
+                                                        fontFamily: 'regular',
+                                                        fontSize: 16,
+                                                        '&::placeholder': {
+                                                            fontFamily: 'regular',
+                                                            fontSize: 16
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: false,
+                                            }}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    bgcolor: COLORS.white,
+                                                    borderRadius: 8,
+                                                    '& fieldset': {
+                                                        borderColor: COLORS.offwhite,
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: COLORS.secondary,
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: COLORS.secondary,
+                                                    },
+                                                },
+                                                '& .MuiInputLabel-root': {
+                                                    fontFamily: 'regular',
+                                                    fontSize: 16,
+                                                },
+                                            }}
+                                        />
+                                    </Box>
+                                </Box>
+                            </>
+                        ) : (
+                            <>
+                                <Box sx={{ mt: 2, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
+                                    <Person2OutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}> {user?.username}</Typography>
+                                </Box>
+                                <Box sx={{ mt: 1, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
+
+                                    <EmailOutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>{user?.email}</Typography>
+                                </Box>
+                                <Box sx={{ mt: 1, flexDirection: 'row', display: 'flex', alignItems: 'center' }} >
+                                    <LocalPhoneOutlinedIcon sx={{ color: COLORS.gray, mr: 1 }} />
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>+{user?.phone}</Typography>
+                                </Box>
+                            </>
+                        )}
                     </Box>
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 } }}>
