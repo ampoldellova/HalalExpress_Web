@@ -15,6 +15,8 @@ import locationImage from '../assets/images/location.png';
 import DeleteAddressModal from '../components/Users/DeleteAddressModal';
 import EditAddressModal from '../components/Users/EditAddressModal';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import CircularProgress from '@mui/material/CircularProgress';
+import { toast } from 'react-toastify';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -36,10 +38,15 @@ const CheckOutPage = () => {
     const user = getUser();
     const location = useLocation();
     const { cart } = location.state;
+    const [username, setUsername] = useState(user?.username);
+    const [image, setImage] = useState(user.profile.url);
+    const [email, setEmail] = useState(user?.email);
+    const [phone, setPhone] = useState(user?.phone);
     const [restaurant, setRestaurant] = useState(null);
     const [addresses, setAddresses] = useState([]);
     const [editUserDetails, setEditUserDetails] = useState(false);
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
     const handleCloseAddAddressModal = () => setOpenAddAddressModal(false);
@@ -74,13 +81,59 @@ const CheckOutPage = () => {
         }
     };
 
+    const handleSubmitForm = async () => {
+        setLoading(true);
+        try {
+            const token = sessionStorage.getItem("token");
+
+            if (!token) {
+                toast.error('User is not authenticated.');
+                setLoading(false);
+                return;
+            }
+
+            const formData = new FormData();
+            if (image) {
+                const response = await fetch(image);
+                const file = await response.blob();
+                formData.append('profile', file, 'profile.jpg');
+            }
+
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('phone', phone);
+
+            const response = await axios.put(`http://localhost:6002/api/users/`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${JSON.parse(token)}`,
+                },
+            });
+
+            if (response.status === 201) {
+                // console.log(response.data);
+                await sessionStorage.removeItem('user');
+                await sessionStorage.setItem('user', JSON.stringify(response.data.data));
+                setEditUserDetails(false);
+                toast.success('Profile updated successfully');
+                setLoading(false);
+            } else {
+                toast.error('Failed to update profile');
+                setLoading(false);
+            }
+        } catch (error) {
+            toast.error('An error occurred. Please try again.');
+            console.error(error);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchUserAddresses();
         fetchRestaurant();
     }, [cart]);
 
-    console.log(editUserDetails);
-
+    console.log(editUserDetails)
     return (
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
@@ -239,7 +292,8 @@ const CheckOutPage = () => {
                                     name="email"
                                     autoComplete="off"
                                     fullWidth
-                                    value={user?.username}
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
@@ -292,7 +346,8 @@ const CheckOutPage = () => {
                                             name="email"
                                             autoComplete="off"
                                             fullWidth
-                                            value={user?.email}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
@@ -345,7 +400,8 @@ const CheckOutPage = () => {
                                             name="email"
                                             autoComplete="off"
                                             fullWidth
-                                            value={user?.phone}
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
@@ -387,7 +443,11 @@ const CheckOutPage = () => {
                                             }}
                                         />
                                     </Box>
+
                                 </Box>
+                                <Button onClick={handleSubmitForm} variant='contained' sx={{ my: 4, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', fontSize: 16, height: 50, borderRadius: 8 }}>
+                                    {loading ? (<CircularProgress sx={{ color: COLORS.white }} size={24} />) : ('S U B M I T')}
+                                </Button>
                             </>
                         ) : (
                             <>

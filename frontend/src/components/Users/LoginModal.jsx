@@ -33,7 +33,7 @@ const LoginModal = ({ open, onClose, signUp }) => {
             authenticate(data, () => { });
             onClose();
             toast.success("Login successful!");
-
+            window.location.reload();
         } catch (error) {
             console.log(error);
         }
