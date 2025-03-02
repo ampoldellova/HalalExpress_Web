@@ -111,9 +111,13 @@ const CheckOutPage = () => {
             });
 
             if (response.status === 201) {
-                // console.log(response.data);
+                const updatedUser = response.data.data;
                 await sessionStorage.removeItem('user');
-                await sessionStorage.setItem('user', JSON.stringify(response.data.data));
+                await sessionStorage.setItem('user', JSON.stringify(updatedUser));
+                setUsername(updatedUser.username);
+                setEmail(updatedUser.email);
+                setPhone(updatedUser.phone);
+                setImage(updatedUser.profile.url);
                 setEditUserDetails(false);
                 toast.success('Profile updated successfully');
                 setLoading(false);
@@ -133,7 +137,10 @@ const CheckOutPage = () => {
         fetchRestaurant();
     }, [cart]);
 
-    console.log(editUserDetails)
+    const isUserDetailsChanged = () => {
+        return username !== user?.username || email !== user?.email || phone !== user?.phone || image !== user.profile.url;
+    };
+
     return (
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
@@ -445,7 +452,23 @@ const CheckOutPage = () => {
                                     </Box>
 
                                 </Box>
-                                <Button onClick={handleSubmitForm} variant='contained' sx={{ my: 4, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', fontSize: 16, height: 50, borderRadius: 8 }}>
+                                <Button
+                                    onClick={handleSubmitForm}
+                                    variant='contained'
+                                    sx={{
+                                        my: 4,
+                                        width: '100%',
+                                        bgcolor: isUserDetailsChanged() ? COLORS.primary : COLORS.gray2,
+                                        color: COLORS.white,
+                                        textTransform: 'none',
+                                        fontFamily: 'bold',
+                                        fontSize: 16,
+                                        height: 50,
+                                        borderRadius: 8,
+                                        cursor: isUserDetailsChanged() ? 'pointer' : 'not-allowed',
+                                    }}
+                                    disabled={!isUserDetailsChanged()}
+                                >
                                     {loading ? (<CircularProgress sx={{ color: COLORS.white }} size={24} />) : ('S U B M I T')}
                                 </Button>
                             </>
@@ -493,7 +516,7 @@ const CheckOutPage = () => {
 
                 <Grid2 item xs={12} md={6} >
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 400 } }}>
-                        <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Your order from</Typography>
+                        <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Your order from:</Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Box component='img' src={restaurant?.logoUrl.url} sx={{ width: 20, height: 20, objectFit: 'cover', borderRadius: 1 }} />
                             <Typography sx={{ fontFamily: 'medium', fontSize: 16, ml: 1 }}>{restaurant?.title}</Typography>
