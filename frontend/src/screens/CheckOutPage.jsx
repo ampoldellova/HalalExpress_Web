@@ -17,6 +17,7 @@ import EditAddressModal from '../components/Users/EditAddressModal';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
+import GoogleApiServices from '../hook/GoogleApiServices';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -44,8 +45,12 @@ const CheckOutPage = () => {
     const [phone, setPhone] = useState(user?.phone);
     const [restaurant, setRestaurant] = useState(null);
     const [addresses, setAddresses] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [distanceTime, setDistanceTime] = useState({});
+    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState('standard');
     const [editUserDetails, setEditUserDetails] = useState(false);
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
+    const [deliveryFee, setDeliveryFee] = useState(0);
     const [loading, setLoading] = useState(false);
 
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
@@ -75,6 +80,9 @@ const CheckOutPage = () => {
 
                 const response = await axios.get(`http://localhost:6002/api/users/address/list`, config);
                 setAddresses(response.data.addresses);
+                if (response.data.addresses.length > 0) {
+                    setSelectedAddress(response.data.addresses[0]);
+                }
             }
         } catch (error) {
             console.error('Error fetching user addresses:', error);
@@ -137,8 +145,35 @@ const CheckOutPage = () => {
         fetchRestaurant();
     }, [cart]);
 
+    useEffect(() => {
+        if (restaurant && selectedAddress) {
+            GoogleApiServices.calculateDistanceAndTime(
+                restaurant.coords.latitude,
+                restaurant.coords.longitude,
+                selectedAddress.latitude,
+                selectedAddress.longitude,
+            ).then((result) => {
+                if (result) {
+                    setDistanceTime(result);
+                    setDeliveryFee(result.finalPrice);
+                }
+            });
+        }
+    }, [restaurant, selectedAddress]);
+
     const isUserDetailsChanged = () => {
         return username !== user?.username || email !== user?.email || phone !== user?.phone || image !== user.profile.url;
+    };
+
+    const totalTime = distanceTime.duration + GoogleApiServices.extractNumbers(restaurant?.time)[0];
+
+    const handleDeliveryOptionChange = (option) => {
+        setSelectedDeliveryOption(option);
+        if (option === 'pickup') {
+            setDeliveryFee(0);
+        } else {
+            setDeliveryFee(distanceTime.finalPrice);
+        }
     };
 
     return (
@@ -150,9 +185,27 @@ const CheckOutPage = () => {
                         <Typography sx={{ fontFamily: 'bold', fontSize: 16, mb: 2 }}>Saved addresses: </Typography>
 
                         {addresses.map((address) => (
-                            <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                            <Box
+                                key={address._id}
+                                sx={{
+                                    mb: 2,
+                                    border: 1,
+                                    borderRadius: 3,
+                                    p: 2,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    flexDirection: 'row',
+                                    borderColor: COLORS.gray2,
+                                    '&:hover': { borderColor: COLORS.black },
+                                }}
+                            >
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Radio sx={{ p: 0 }} />
+                                    <Radio
+                                        sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
+                                        checked={selectedAddress?._id === address._id}
+                                        onChange={() => setSelectedAddress(address)}
+                                    />
                                     <Box component='img' src={locationImage} sx={{ width: 20, height: 20, mx: 1 }} />
                                     <Typography sx={{ fontFamily: 'regular', fontSize: 14, width: 450 }}>{address.address}</Typography>
                                 </Box>
@@ -230,14 +283,22 @@ const CheckOutPage = () => {
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Options</Typography>
                         <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio sx={{ p: 0, mr: 2 }} />
+                                <Radio
+                                    sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
+                                    checked={selectedDeliveryOption === 'standard'}
+                                    onChange={() => handleDeliveryOptionChange('standard')}
+                                />
                                 <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard </Typography>
-                                <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({restaurant?.time})</Typography>
+                                <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
                             </Box>
                         </Box>
                         <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio sx={{ p: 0, mr: 2 }} />
+                                <Radio
+                                    sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
+                                    checked={selectedDeliveryOption === 'pickup'}
+                                    onChange={() => handleDeliveryOptionChange('pickup')}
+                                />
                                 <Typography sx={{ fontFamily: 'medium', fontSize: 16 }}>Pickup</Typography>
                             </Box>
                         </Box>
@@ -559,13 +620,15 @@ const CheckOutPage = () => {
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
                             <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>Delivery Fee:</Typography>
-                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>₱ 0.00</Typography>
+                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>{deliveryFee}</Typography>
 
                         </Box>
                         <Divider />
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Total:</Typography>
-                            <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>₱ 0.00</Typography>
+                            <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>
+                                ₱ {(parseFloat(cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2)}
+                            </Typography>
                         </Box>
                     </Box>
                 </Grid2>
