@@ -4,18 +4,15 @@ module.exports = {
     addFoodToCart: async (req, res) => {
         const userId = req.user.id;
         const { foodId, totalPrice, quantity, additives, instructions, restaurantId } = req.body;
-        // console.log(req.body)
+        
         try {
             let cart = await Cart.findOne({ userId });
 
             if (cart) {
-                // Check if the cart contains items from a different restaurant
-                console.log(cart.cartItems)
                 const differentRestaurantItemIndex = cart.cartItems.findIndex(item => item.foodId.restaurant.toString() !== restaurantId);
                 if (differentRestaurantItemIndex > -1) {
-                    // Remove items from a different restaurant
                     cart.cartItems = cart.cartItems.filter(item => item.foodId.restaurant.toString() === restaurantId);
-                    cart.totalAmount = 0; // Reset total amount
+                    cart.totalAmount = 0; 
                 }
 
                 const existingItemIndex = cart.cartItems.findIndex(item => item.foodId._id.toString() === foodId);

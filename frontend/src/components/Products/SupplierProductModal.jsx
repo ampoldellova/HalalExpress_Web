@@ -48,7 +48,8 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
             productId: productId,
             totalPrice: product.price * count,
             quantity: count,
-            instructions: preference
+            instructions: preference,
+            supplierId: product.supplier
         }
 
         try {

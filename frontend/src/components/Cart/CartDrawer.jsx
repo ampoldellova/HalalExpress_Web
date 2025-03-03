@@ -31,6 +31,7 @@ const CartDrawer = ({ onClick }) => {
     const navigate = useNavigate()
     const [cart, setCart] = useState([])
     const [cartItems, setCartItems] = useState([])
+    const [vendorCart, setVendorCart] = useState([])
     const [vendorCartItems, setVendorCartItems] = useState([])
     const token = getToken();
     const user = getUser();
@@ -68,6 +69,7 @@ const CartDrawer = ({ onClick }) => {
 
                 const response = await axios.get(`http://localhost:6002/api/cart/vendor/`, config)
                 setVendorCartItems(response.data.cartItems)
+                setVendorCart(response.data.vendorCart)
             } else {
                 console.log('No token found')
             }
@@ -211,6 +213,8 @@ const CartDrawer = ({ onClick }) => {
         { user && user.userType === 'Vendor' ? getVendorCartItems() : getCartItems() }
     }, []);
 
+    console.log(vendorCart)
+
     return (
         <Box sx={{ width: 500 }}>
             <Container maxWidth='sm'>
@@ -252,6 +256,11 @@ const CartDrawer = ({ onClick }) => {
                                                 </Box>
                                             </Box>
                                         ))}
+                                        <Divider sx={{ mt: 5 }} />
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>Total: </Typography>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>₱ {vendorCart.totalAmount.toFixed(2)}</Typography>
+                                        </Box>
                                     </>
                                 ) : (
                                     <>
@@ -317,7 +326,6 @@ const CartDrawer = ({ onClick }) => {
                                         </Box>
                                         <Button onClick={() => { navigate(`/checkout/${cart._id}`, { state: { cart } }); onClick() }} variant='contained' sx={{ width: '100%', mt: 2, backgroundColor: COLORS.primary, color: COLORS.white, fontFamily: 'bold', borderRadius: 8, height: 50, fontSize: 18 }}>
                                             C H E C K O U T
-                                            {console.log(cart)}
                                         </Button>
                                     </>
                                 ) : (

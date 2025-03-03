@@ -123,8 +123,6 @@ export default function NavigationBar() {
         }
     }, [cart, vendorCartItems]);
 
-    console.log(vendorCartItems.length)
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" sx={{ backgroundColor: COLORS.white }}>
