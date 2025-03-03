@@ -39,11 +39,13 @@ const CheckOutPage = () => {
     const user = getUser();
     const location = useLocation();
     const { cart } = location.state;
+    const { vendorCart } = location.state;
     const [username, setUsername] = useState(user?.username);
     const [image, setImage] = useState(user.profile.url);
     const [email, setEmail] = useState(user?.email);
     const [phone, setPhone] = useState(user?.phone);
     const [restaurant, setRestaurant] = useState(null);
+    const [supplier, setSupplier] = useState(null);
     const [addresses, setAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [distanceTime, setDistanceTime] = useState({});
@@ -64,6 +66,18 @@ const CheckOutPage = () => {
                 setRestaurant(response.data.data);
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
+            }
+        }
+    };
+
+    const fetchSupplier = async () => {
+        if (vendorCart?.cartItems.length > 0) {
+            const supplierId = vendorCart.cartItems[0].productId.supplier;
+            try {
+                const response = await axios.get(`http://localhost:6002/api/supplier/byId/${supplierId}`);
+                setSupplier(response.data.data);
+            } catch (error) {
+                console.error('Error fetching supplier data:', error);
             }
         }
     };
@@ -142,16 +156,18 @@ const CheckOutPage = () => {
 
     useEffect(() => {
         fetchUserAddresses();
-        fetchRestaurant();
+
+        { user?.userType === 'Vendor' ? fetchSupplier() : fetchRestaurant() }
     }, [cart]);
 
     useEffect(() => {
-        if (restaurant && selectedAddress) {
+        if ((user?.userType === 'Vendor' && supplier && selectedAddress) || (restaurant && selectedAddress)) {
+            const origin = user?.userType === 'Vendor' ? supplier.coords : restaurant.coords;
             GoogleApiServices.calculateDistanceAndTime(
-                restaurant.coords.latitude,
-                restaurant.coords.longitude,
+                origin.latitude,
+                origin.longitude,
                 selectedAddress.latitude,
-                selectedAddress.longitude,
+                selectedAddress.longitude
             ).then((result) => {
                 if (result) {
                     setDistanceTime(result);
@@ -159,13 +175,13 @@ const CheckOutPage = () => {
                 }
             });
         }
-    }, [restaurant, selectedAddress]);
+    }, [supplier, restaurant, selectedAddress]);
 
     const isUserDetailsChanged = () => {
         return username !== user?.username || email !== user?.email || phone !== user?.phone || image !== user.profile.url;
     };
 
-    const totalTime = distanceTime.duration + GoogleApiServices.extractNumbers(restaurant?.time)[0];
+    const totalTime = distanceTime.duration + GoogleApiServices.extractNumbers(user.userType === 'Vendor' ? supplier?.time : restaurant?.time)[0];
 
     const handleDeliveryOptionChange = (option) => {
         setSelectedDeliveryOption(option);
@@ -175,6 +191,8 @@ const CheckOutPage = () => {
             setDeliveryFee(distanceTime.finalPrice);
         }
     };
+
+    console.log('Vendor Cart:', vendorCart);
 
     return (
         <Container maxWidth='lg'>
@@ -579,55 +597,88 @@ const CheckOutPage = () => {
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 400 } }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Your order from:</Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Box component='img' src={restaurant?.logoUrl.url} sx={{ width: 20, height: 20, objectFit: 'cover', borderRadius: 1 }} />
-                            <Typography sx={{ fontFamily: 'medium', fontSize: 16, ml: 1 }}>{restaurant?.title}</Typography>
+                            <Box component='img' src={user.userType === 'Vendor' ? supplier?.logoUrl.url : restaurant?.logoUrl.url} sx={{ width: 20, height: 20, objectFit: 'cover', borderRadius: 1 }} />
+                            <Typography sx={{ fontFamily: 'medium', fontSize: 16, ml: 1 }}>{user.userType === 'Vendor' ? supplier?.title : restaurant?.title}</Typography>
                         </Box>
 
                         <Box sx={{ my: 4 }}>
-                            {cart?.cartItems.map((item) => (
+                            {user.userType === 'Vendor' ? (
                                 <>
-                                    <Box sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}>
-                                        <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 50, width: 50, objectFit: 'cover', borderRadius: 3, mr: 1 }} />
-                                        <Box>
-                                            <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>{item.quantity}x {item.foodId.title}</Typography>
-                                            {item.additives.length > 0 ? (
-                                                <>
-                                                    {item.additives.map((additive) => (
-                                                        < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
-                                                            + {additive.title}
-                                                        </Typography>
-                                                    ))}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
-                                                        - No additives
-                                                    </Typography>
-                                                </>
-                                            )}
-                                        </Box>
-                                        <Box sx={{ ml: 'auto' }}>
-                                            <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>₱ {item.totalPrice.toFixed(2)}</Typography>
-                                        </Box>
-                                    </Box>
+                                    {vendorCart?.cartItems.map((item) => (
+                                        <>
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}>
+                                                <Box component='img' src={item.productId.imageUrl.url} sx={{ height: 50, width: 50, objectFit: 'cover', borderRadius: 3, mr: 1 }} />
+                                                <Box>
+                                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>{item.quantity}x {item.productId.title}</Typography>
+                                                    {item.instructions ? (
+                                                        <>
+                                                            < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
+                                                                - {item.instructions}
+                                                            </Typography>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
+                                                                - No instructions
+                                                            </Typography>
+                                                        </>
+                                                    )}
+                                                </Box>
+                                                <Box sx={{ ml: 'auto' }}>
+                                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>₱ {item.totalPrice.toFixed(2)}</Typography>
+                                                </Box>
+                                            </Box>
+                                        </>
+                                    ))}
                                 </>
-                            ))}
+                            ) : (
+                                <>
+                                    {cart?.cartItems.map((item) => (
+                                        <>
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', mb: 2 }}>
+                                                <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 50, width: 50, objectFit: 'cover', borderRadius: 3, mr: 1 }} />
+                                                <Box>
+                                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>{item.quantity}x {item.foodId.title}</Typography>
+                                                    {item.additives.length > 0 ? (
+                                                        <>
+                                                            {item.additives.map((additive) => (
+                                                                < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
+                                                                    + {additive.title}
+                                                                </Typography>
+                                                            ))}
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
+                                                                - No additives
+                                                            </Typography>
+                                                        </>
+                                                    )}
+                                                </Box>
+                                                <Box sx={{ ml: 'auto' }}>
+                                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>₱ {item.totalPrice.toFixed(2)}</Typography>
+                                                </Box>
+                                            </Box>
+                                        </>
+                                    ))}
+                                </>
+                            )}
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>Subtotal:</Typography>
-                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>₱ {cart?.totalAmount.toFixed(2)}</Typography>
+                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>₱ {user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)}</Typography>
 
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
                             <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>Delivery Fee:</Typography>
-                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>{deliveryFee}</Typography>
+                            <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>₱ {deliveryFee}</Typography>
 
                         </Box>
                         <Divider />
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>Total:</Typography>
                             <Typography sx={{ fontFamily: 'bold', fontSize: 24 }}>
-                                ₱ {(parseFloat(cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2)}
+                                ₱ {(parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2)}
                             </Typography>
                         </Box>
                     </Box>

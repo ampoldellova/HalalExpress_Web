@@ -261,6 +261,9 @@ const CartDrawer = ({ onClick }) => {
                                             <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>Total: </Typography>
                                             <Typography sx={{ fontFamily: 'bold', fontSize: 18 }}>₱ {vendorCart.totalAmount.toFixed(2)}</Typography>
                                         </Box>
+                                        <Button onClick={() => { navigate(`/checkout/${vendorCart._id}`, { state: { vendorCart } }); onClick() }} variant='contained' sx={{ width: '100%', mt: 2, backgroundColor: COLORS.primary, color: COLORS.white, fontFamily: 'bold', borderRadius: 8, height: 50, fontSize: 18 }}>
+                                            C H E C K O U T
+                                        </Button>
                                     </>
                                 ) : (
                                     <>
