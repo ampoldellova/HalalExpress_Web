@@ -17,7 +17,7 @@ const calculateDistanceAndTime = async (startLat, startLng, destinationLat, dest
     },
     data: data
   };
-  console.log(data)
+  
   try {
     const response = await axios(config);
     const distance = response.data.sources_to_targets[0][0].distance;

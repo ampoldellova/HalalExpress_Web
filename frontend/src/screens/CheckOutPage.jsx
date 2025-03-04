@@ -18,6 +18,8 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
 import GoogleApiServices from '../hook/GoogleApiServices';
+import { createPaymentIntent } from '../hook/paymongoService';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -54,6 +56,8 @@ const CheckOutPage = () => {
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
     const [deliveryFee, setDeliveryFee] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [paymentIntent, setPaymentIntent] = useState(null);
+    const [qrCodeUrl, setQrCodeUrl] = useState('');
 
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
     const handleCloseAddAddressModal = () => setOpenAddAddressModal(false);
@@ -154,6 +158,25 @@ const CheckOutPage = () => {
         }
     };
 
+    const handlePayment = async () => {
+        setLoading(true);
+        try {
+            const amount = (parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2);
+            const intent = await createPaymentIntent(amount);
+            setPaymentIntent(intent);
+            if (intent.attributes.next_action) {
+                setQrCodeUrl(intent.attributes.next_action.qr_code.image_url); // Update this line to set the QR code URL
+            } else {
+                toast.error('No next action available for the payment intent');
+            }
+            setLoading(false);
+        } catch (error) {
+            toast.error('Failed to create payment intent');
+            console.error(error);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchUserAddresses();
 
@@ -192,8 +215,8 @@ const CheckOutPage = () => {
         }
     };
 
-    console.log('Vendor Cart:', vendorCart);
-
+    console.log(paymentIntent);
+    console.log((parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2))
     return (
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
@@ -588,7 +611,21 @@ const CheckOutPage = () => {
                         </Box>
                     </Box>
 
-                    <Button variant='contained' sx={{ my: 4, width: '100%', bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', fontSize: 16, height: 50, borderRadius: 8 }}>
+                    <Button
+                        variant='contained'
+                        sx={{
+                            my: 4,
+                            width: '100%',
+                            bgcolor: COLORS.primary,
+                            color: COLORS.white,
+                            textTransform: 'none',
+                            fontFamily: 'bold',
+                            fontSize: 16,
+                            height: 50,
+                            borderRadius: 8
+                        }}
+                        onClick={handlePayment}
+                    >
                         {'P L A C E   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
                     </Button>
                 </Grid2>
@@ -685,6 +722,12 @@ const CheckOutPage = () => {
                 </Grid2>
             </Grid2 >
             <AddAddressModal open={openAddAddressModal} onClose={handleCloseAddAddressModal} fetchUserAddresses={fetchUserAddresses} />
+            {qrCodeUrl && (
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                    <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Scan to Pay</Typography>
+                    <QRCodeCanvas value={qrCodeUrl} size={256} />
+                </Box>
+            )}
         </Container >
     );
 };
