@@ -18,8 +18,6 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
 import GoogleApiServices from '../hook/GoogleApiServices';
-import { createPaymentIntent } from '../hook/paymongoService';
-import { QRCodeCanvas } from 'qrcode.react';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -56,8 +54,7 @@ const CheckOutPage = () => {
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
     const [deliveryFee, setDeliveryFee] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [paymentIntent, setPaymentIntent] = useState(null);
-    const [qrCodeUrl, setQrCodeUrl] = useState('');
+    const [paymentMethod, setPaymentMethod] = useState('');
 
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
     const handleCloseAddAddressModal = () => setOpenAddAddressModal(false);
@@ -158,28 +155,8 @@ const CheckOutPage = () => {
         }
     };
 
-    const handlePayment = async () => {
-        setLoading(true);
-        try {
-            const amount = (parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2);
-            const intent = await createPaymentIntent(amount);
-            setPaymentIntent(intent);
-            if (intent.attributes.next_action) {
-                setQrCodeUrl(intent.attributes.next_action.qr_code.image_url); // Update this line to set the QR code URL
-            } else {
-                toast.error('No next action available for the payment intent');
-            }
-            setLoading(false);
-        } catch (error) {
-            toast.error('Failed to create payment intent');
-            console.error(error);
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
         fetchUserAddresses();
-
         { user?.userType === 'Vendor' ? fetchSupplier() : fetchRestaurant() }
     }, [cart]);
 
@@ -215,8 +192,8 @@ const CheckOutPage = () => {
         }
     };
 
-    console.log(paymentIntent);
-    console.log((parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee)).toFixed(2))
+    console.log(restaurant?.delivery)
+
     return (
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
@@ -322,27 +299,42 @@ const CheckOutPage = () => {
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Options</Typography>
-                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio
-                                    sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
-                                    checked={selectedDeliveryOption === 'standard'}
-                                    onChange={() => handleDeliveryOptionChange('standard')}
-                                />
-                                <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard </Typography>
-                                <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
+                        {restaurant?.delivery ? (
+                            <>
+                                <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Radio
+                                            sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
+                                            checked={selectedDeliveryOption === 'standard'}
+                                            onChange={() => handleDeliveryOptionChange('standard')}
+                                        />
+                                        <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard </Typography>
+                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
+                                    </Box>
+                                </Box>
+                                <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Radio
+                                            sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
+                                            checked={selectedDeliveryOption === 'pickup'}
+                                            onChange={() => handleDeliveryOptionChange('pickup')}
+                                        />
+                                        <Typography sx={{ fontFamily: 'medium', fontSize: 16 }}>Pickup</Typography>
+                                    </Box>
+                                </Box>
+                            </>
+                        ) : (
+                            <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Radio
+                                        sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
+                                        checked={selectedDeliveryOption === 'pickup'}
+                                        onChange={() => handleDeliveryOptionChange('pickup')}
+                                    />
+                                    <Typography sx={{ fontFamily: 'medium', fontSize: 16 }}>Pickup</Typography>
+                                </Box>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio
-                                    sx={{ p: 0, mr: 2, '&.Mui-checked': { color: COLORS.primary } }}
-                                    checked={selectedDeliveryOption === 'pickup'}
-                                    onChange={() => handleDeliveryOptionChange('pickup')}
-                                />
-                                <Typography sx={{ fontFamily: 'medium', fontSize: 16 }}>Pickup</Typography>
-                            </Box>
-                        </Box>
+                        )}
                     </Box>
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
@@ -595,19 +587,43 @@ const CheckOutPage = () => {
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 } }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Payment Options</Typography>
-                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio sx={{ p: 0 }} />
+                                <Radio
+                                    sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
+                                    checked={paymentMethod === 'cod'}
+                                    onChange={() => setPaymentMethod('cod')}
+                                />
                                 <Box component='img' src={cash} sx={{ width: 30, height: 30, mx: 1 }} />
                                 <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>Cash On Delivery</Typography>
                             </Box>
+                            {paymentMethod === 'cod' ? (
+                                <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray, mt: 2 }}>
+                                    Consider payment upon ordering for contactless delivery. You can't pay by a card to the rider upon delivery.
+                                </Typography>
+                            ) : (
+                                <>
+                                </>
+                            )}
                         </Box>
-                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio sx={{ p: 0 }} />
+                                <Radio
+                                    sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
+                                    checked={paymentMethod === 'gcash'}
+                                    onChange={() => setPaymentMethod('gcash')}
+                                />
                                 <Box component='img' src={Gcash} sx={{ width: 35, height: 30, mx: 1 }} />
                                 <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>GCash</Typography>
                             </Box>
+                            {paymentMethod === 'gcash' ? (
+                                <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray, mt: 2 }}>
+                                    You will be redirected to GCash after checkout. After you've performed the payment, you will be redirected back to HalalExpress.
+                                </Typography>
+                            ) : (
+                                <>
+                                </>
+                            )}
                         </Box>
                     </Box>
 
@@ -624,7 +640,7 @@ const CheckOutPage = () => {
                             height: 50,
                             borderRadius: 8
                         }}
-                        onClick={handlePayment}
+                        onClick={() => { }}
                     >
                         {'P L A C E   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
                     </Button>
@@ -722,12 +738,6 @@ const CheckOutPage = () => {
                 </Grid2>
             </Grid2 >
             <AddAddressModal open={openAddAddressModal} onClose={handleCloseAddAddressModal} fetchUserAddresses={fetchUserAddresses} />
-            {qrCodeUrl && (
-                <Box sx={{ textAlign: 'center', mt: 4 }}>
-                    <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Scan to Pay</Typography>
-                    <QRCodeCanvas value={qrCodeUrl} size={256} />
-                </Box>
-            )}
         </Container >
     );
 };

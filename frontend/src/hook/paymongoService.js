@@ -69,10 +69,13 @@ export const createPaymentIntent = async (amount) => {
         );
 
         // Step 4: Display the dynamic GCash code on your front-end or checkout
-        const qrCode = attachResponse.data.data.attributes.next_action.code;
-        console.log('GCash Code Image URL:', qrCode.image_url);
+        const defaultGcashUrl = 'https://www.gcash.com/default-payment-url';
+        console.log('Default GCash Payment URL:', defaultGcashUrl);
 
-        return attachResponse.data.data;
+        return {
+            ...attachResponse.data.data,
+            defaultGcashUrl
+        };
 
     } catch (error) {
         console.error('Error creating payment intent:', error);

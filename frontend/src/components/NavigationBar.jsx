@@ -107,6 +107,7 @@ export default function NavigationBar() {
     };
 
     const handleLogout = async () => {
+        navigate('/');
         logout(() => { });
         window.location.reload();
     };

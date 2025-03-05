@@ -45,4 +45,19 @@ app.use('/api/supplier', supplierRouter)
 app.use('/api/supplyCategory', supplyCategoryRouter)
 app.use('/api/ingredients', ingredientController)
 
+app.post('/webhook', (req, res) => {
+    const event = req.body;
+
+    // Verify the webhook signature here (optional but recommended)
+
+    if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.attributes;
+        // Handle successful payment here
+        console.log('Payment succeeded:', paymentIntent);
+        // Update your database or perform other actions
+    }
+
+    res.status(200).send('Received');
+});
+
 app.listen(process.env.PORT || port, () => console.log(`HalalExpress app listening on port ${process.env.PORT}!`))
