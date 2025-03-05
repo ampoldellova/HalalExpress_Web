@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const PAYMONGO_API_KEY = 'sk_test_5Ach5aZsrXzFmdv1MDaPiaVc'; // Replace with your PayMongo TEST API key
 const PAYMONGO_API_URL = 'https://api.paymongo.com/v1';
 
 const createPaymentIntent = async (amount, currency = 'PHP') => {
@@ -17,7 +16,7 @@ const createPaymentIntent = async (amount, currency = 'PHP') => {
         },
         {
             headers: {
-                Authorization: `Basic ${btoa(PAYMONGO_API_KEY)}`,
+                Authorization: `Basic ${btoa(process.env.REACT_APP_PAYMONGO_SECRET_KEY)}`,
                 'Content-Type': 'application/json',
             },
         }
@@ -39,7 +38,7 @@ const attachPaymentMethod = async (paymentIntentId, paymentMethodId, returnUrl) 
         },
         {
             headers: {
-                Authorization: `Basic ${btoa(PAYMONGO_API_KEY)}`,
+                Authorization: `Basic ${btoa(process.env.REACT_APP_PAYMONGO_SECRET_KEY)}`,
                 'Content-Type': 'application/json',
             },
         }
@@ -66,7 +65,7 @@ const createPaymentMethod = async (phone, email, name) => {
         },
         {
             headers: {
-                Authorization: `Basic ${btoa(PAYMONGO_API_KEY)}`,
+                Authorization: `Basic ${btoa(process.env.REACT_APP_PAYMONGO_SECRET_KEY)}`,
                 'Content-Type': 'application/json',
             },
         }
