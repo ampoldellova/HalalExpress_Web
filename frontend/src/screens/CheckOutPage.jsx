@@ -167,6 +167,22 @@ const CheckOutPage = () => {
         }
     };
 
+    const clearCart = async () => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+                await axios.delete(`http://localhost:6002/api/cart/clear-cart`, config);
+            }
+        } catch (error) {
+            toast.error('Error clearing cart:', error);
+        }
+    };
+
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'gcash') {
             setLoading(true);
@@ -174,14 +190,12 @@ const CheckOutPage = () => {
 
             try {
                 const amount = parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
-
                 const paymentIntent = await createPaymentIntent(amount);
                 const paymentMethodResponse = await createPaymentMethod(phone, email, username);
                 const returnUrl = 'http://localhost:3000/';
-
                 const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, returnUrl);
-
                 window.location.href = response.data.attributes.next_action.redirect.url;
+                clearCart();
                 setLoading(false);
             } catch (error) {
                 console.error('Error processing payment:', error);

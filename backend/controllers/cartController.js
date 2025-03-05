@@ -4,7 +4,7 @@ module.exports = {
     addFoodToCart: async (req, res) => {
         const userId = req.user.id;
         const { foodId, totalPrice, quantity, additives, instructions, restaurantId } = req.body;
-        
+
         try {
             let cart = await Cart.findOne({ userId });
 
@@ -12,7 +12,7 @@ module.exports = {
                 const differentRestaurantItemIndex = cart.cartItems.findIndex(item => item.foodId.restaurant.toString() !== restaurantId);
                 if (differentRestaurantItemIndex > -1) {
                     cart.cartItems = cart.cartItems.filter(item => item.foodId.restaurant.toString() === restaurantId);
-                    cart.totalAmount = 0; 
+                    cart.totalAmount = 0;
                 }
 
                 const existingItemIndex = cart.cartItems.findIndex(item => item.foodId._id.toString() === foodId);
@@ -151,6 +151,26 @@ module.exports = {
                 } else {
                     return res.status(404).json({ status: false, message: 'Item not found in cart' });
                 }
+            } else {
+                return res.status(404).json({ status: false, message: 'Cart not found' });
+            }
+        } catch (error) {
+            res.status(500).json({ status: false, message: error.message });
+        }
+    },
+
+    clearCart: async (req, res) => {
+        const userId = req.user.id;
+
+        try {
+            let cart = await Cart.findOne({ userId });
+
+            if (cart) {
+                cart.cartItems = [];
+                cart.totalAmount = 0;
+
+                await cart.save();
+                return res.status(200).json({ status: true, message: 'Cart cleared successfully' });
             } else {
                 return res.status(404).json({ status: false, message: 'Cart not found' });
             }
