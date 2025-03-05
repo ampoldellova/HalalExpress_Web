@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardActions, CardContent, Container, Divider, Grid, Grid2, InputAdornment, Radio, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import cash from '../assets/images/COD.png';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
@@ -18,6 +18,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
 import GoogleApiServices from '../hook/GoogleApiServices';
+import { attachPaymentMethod, createPaymentIntent, createPaymentMethod } from '../hook/paymongoService';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -55,6 +56,8 @@ const CheckOutPage = () => {
     const [deliveryFee, setDeliveryFee] = useState(0);
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('');
+    const [paymentUrl, setPaymentUrl] = useState(null);
+    const navigate = useNavigate();
 
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
     const handleCloseAddAddressModal = () => setOpenAddAddressModal(false);
@@ -155,6 +158,39 @@ const CheckOutPage = () => {
         }
     };
 
+    const handleDeliveryOptionChange = (option) => {
+        setSelectedDeliveryOption(option);
+        if (option === 'pickup') {
+            setDeliveryFee(0);
+        } else {
+            setDeliveryFee(distanceTime.finalPrice);
+        }
+    };
+
+    const handlePlaceOrder = async () => {
+        if (paymentMethod === 'gcash') {
+            setLoading(true);
+
+
+            try {
+                const amount = parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
+
+                const paymentIntent = await createPaymentIntent(amount);
+                const paymentMethodResponse = await createPaymentMethod(phone, email, username);
+                const returnUrl = 'http://localhost:3000/';
+
+                const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, returnUrl);
+
+                window.location.href = response.data.attributes.next_action.redirect.url;
+                setLoading(false);
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                setLoading(false);
+            }
+        } else {
+        }
+    };
+
     useEffect(() => {
         fetchUserAddresses();
         { user?.userType === 'Vendor' ? fetchSupplier() : fetchRestaurant() }
@@ -182,17 +218,6 @@ const CheckOutPage = () => {
     };
 
     const totalTime = distanceTime.duration + GoogleApiServices.extractNumbers(user.userType === 'Vendor' ? supplier?.time : restaurant?.time)[0];
-
-    const handleDeliveryOptionChange = (option) => {
-        setSelectedDeliveryOption(option);
-        if (option === 'pickup') {
-            setDeliveryFee(0);
-        } else {
-            setDeliveryFee(distanceTime.finalPrice);
-        }
-    };
-
-    console.log(restaurant?.delivery)
 
     return (
         <Container maxWidth='lg'>
@@ -640,9 +665,9 @@ const CheckOutPage = () => {
                             height: 50,
                             borderRadius: 8
                         }}
-                        onClick={() => { }}
+                        onClick={handlePlaceOrder}
                     >
-                        {'P L A C E   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
+                        {loading ? (<CircularProgress sx={{ color: COLORS.white }} size={24} />) : 'P L A C E   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
                     </Button>
                 </Grid2>
 

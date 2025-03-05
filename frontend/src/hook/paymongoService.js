@@ -1,84 +1,78 @@
 import axios from 'axios';
 
-const PAYMONGO_SECRET_KEY = 'sk_test_5Ach5aZsrXzFmdv1MDaPiaVc';
+const PAYMONGO_API_KEY = 'sk_test_5Ach5aZsrXzFmdv1MDaPiaVc'; // Replace with your PayMongo TEST API key
 const PAYMONGO_API_URL = 'https://api.paymongo.com/v1';
 
-export const createPaymentIntent = async (amount) => {
-    console.log(amount)
-    try {
-        const response = await axios.post(
-            `${PAYMONGO_API_URL}/payment_intents`,
-            {
-                data: {
-                    attributes: {
-                        amount: amount * 100,
-                        payment_method_allowed: ['gcash'],
-                        currency: 'PHP',
-                    },
+const createPaymentIntent = async (amount, currency = 'PHP') => {
+    const response = await axios.post(
+        `${PAYMONGO_API_URL}/payment_intents`,
+        {
+            data: {
+                attributes: {
+                    amount: amount * 100, // Amount in centavos
+                    payment_method_allowed: ['gcash'],
+                    currency,
                 },
             },
-            {
-                headers: {
-                    Authorization: `Basic ${btoa(PAYMONGO_SECRET_KEY)}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        const paymentIntent = response.data.data;
-
-        // Step 2: Create a GCash payment method
-        const paymentMethodResponse = await axios.post(
-            `${PAYMONGO_API_URL}/payment_methods`,
-            {
-                data: {
-                    attributes: {
-                        type: 'gcash',
-                        billing: {
-                            name: 'Customer Name',
-                            email: 'customer@example.com',
-                            // Optional: address and phone
-                        },
-                    },
-                },
+        },
+        {
+            headers: {
+                Authorization: `Basic ${btoa(PAYMONGO_API_KEY)}`,
+                'Content-Type': 'application/json',
             },
-            {
-                headers: {
-                    Authorization: `Basic ${btoa(PAYMONGO_SECRET_KEY)}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        const paymentMethod = paymentMethodResponse.data.data;
+        }
+    );
 
-        // Step 3: Attach the payment method to the created payment intent
-        const attachResponse = await axios.post(
-            `${PAYMONGO_API_URL}/payment_intents/${paymentIntent.id}/attach`,
-            {
-                data: {
-                    attributes: {
-                        payment_method: paymentMethod.id,
-                    },
-                },
-            },
-            {
-                headers: {
-                    Authorization: `Basic ${btoa(PAYMONGO_SECRET_KEY)}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-
-        // Step 4: Display the dynamic GCash code on your front-end or checkout
-        const defaultGcashUrl = 'https://www.gcash.com/default-payment-url';
-        console.log('Default GCash Payment URL:', defaultGcashUrl);
-
-        return {
-            ...attachResponse.data.data,
-            defaultGcashUrl
-        };
-
-    } catch (error) {
-        console.error('Error creating payment intent:', error);
-        throw error;
-    }
+    return response.data;
 };
+
+const attachPaymentMethod = async (paymentIntentId, paymentMethodId, returnUrl) => {
+    const response = await axios.post(
+        `${PAYMONGO_API_URL}/payment_intents/${paymentIntentId}/attach`,
+        {
+            data: {
+                attributes: {
+                    payment_method: paymentMethodId,
+                    return_url: returnUrl,
+                },
+            },
+        },
+        {
+            headers: {
+                Authorization: `Basic ${btoa(PAYMONGO_API_KEY)}`,
+                'Content-Type': 'application/json',
+            },
+        }
+    );
+
+    console.log(response.data);
+    return response.data;
+};
+
+const createPaymentMethod = async (phone, email, name) => {
+    const response = await axios.post(
+        `${PAYMONGO_API_URL}/payment_methods`,
+        {
+            data: {
+                attributes: {
+                    type: 'gcash',
+                    billing: {
+                        phone: phone,
+                        email: email,
+                        name: name,
+                    },
+                },
+            },
+        },
+        {
+            headers: {
+                Authorization: `Basic ${btoa(PAYMONGO_API_KEY)}`,
+                'Content-Type': 'application/json',
+            },
+        }
+    );
+
+    return response.data;
+};
+
+export { createPaymentIntent, attachPaymentMethod, createPaymentMethod };
