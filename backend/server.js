@@ -15,7 +15,8 @@ const cartRouter = require('./routes/cart')
 const vendorCartRouter = require('./routes/vendorCart')
 const supplierRouter = require('./routes/supplier')
 const supplyCategoryRouter = require('./routes/supplyCategory')
-const ingredientController = require('./routes/ingredient')
+const ingredientRouter = require('./routes/ingredient')
+const orderRouter = require('./routes/order')
 
 dotenv.config()
 require('./cloudinary')
@@ -43,7 +44,8 @@ app.use('/api/cart/vendor', vendorCartRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/supplier', supplierRouter)
 app.use('/api/supplyCategory', supplyCategoryRouter)
-app.use('/api/ingredients', ingredientController)
+app.use('/api/ingredients', ingredientRouter)
+app.use('/api/orders', orderRouter)
 
 app.post('/webhook', (req, res) => {
     const event = req.body;

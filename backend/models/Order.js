@@ -40,6 +40,14 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    subTotal: {
+        type: Number,
+        required: true
+    },
+    deliveryFee: {
+        type: Number,
+        required: true
+    },
     totalAmount: {
         type: Number,
         required: true
@@ -56,7 +64,7 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    deliveryNote: {
+    orderNote: {
         type: String,
         trim: true,
         maxlength: 250,

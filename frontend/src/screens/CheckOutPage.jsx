@@ -55,10 +55,10 @@ const CheckOutPage = () => {
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
     const [deliveryFee, setDeliveryFee] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('');
-    const [paymentUrl, setPaymentUrl] = useState(null);
-    const navigate = useNavigate();
+    const [paymentMethod, setPaymentMethod] = useState('cod');
+    const [orderNote, setOrderNote] = useState('');
 
+    const navigate = useNavigate();
     const handleOpenAddAddressModal = () => setOpenAddAddressModal(true);
     const handleCloseAddAddressModal = () => setOpenAddAddressModal(false);
 
@@ -167,27 +167,9 @@ const CheckOutPage = () => {
         }
     };
 
-    const clearCart = async () => {
-        try {
-            const token = await sessionStorage.getItem('token');
-            if (token) {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${JSON.parse(token)}`,
-                    }
-                }
-                await axios.delete(`http://localhost:6002/api/cart/clear-cart`, config);
-            }
-        } catch (error) {
-            toast.error('Error clearing cart:', error);
-        }
-    };
-
     const handlePlaceOrder = async () => {
         if (paymentMethod === 'gcash') {
             setLoading(true);
-
-
             try {
                 const amount = parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
                 const paymentIntent = await createPaymentIntent(amount);
@@ -195,13 +177,82 @@ const CheckOutPage = () => {
                 const returnUrl = 'http://localhost:3000/';
                 const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, returnUrl);
                 window.location.href = response.data.attributes.next_action.redirect.url;
-                clearCart();
+
+                const token = await sessionStorage.getItem('token');
+                if (token) {
+                    const config = {
+                        headers: {
+                            Authorization: `Bearer ${JSON.parse(token)}`,
+                        }
+                    }
+
+                    const data = {
+                        restaurant: user.userType === 'Vendor' ? supplier._id : restaurant._id,
+                        orderItems: user.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
+                        deliveryAddress: selectedAddress.address,
+                        subTotal: user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2),
+                        deliveryFee,
+                        totalAmount: parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
+                        paymentMethod,
+                        paymentStatus: 'Pending',
+                        orderStatus: 'Paid',
+                        orderNote,
+                    };
+
+                    const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
+                    if (response.status === 200) {
+                        toast.success('Order placed successfully');
+                        navigate('/orders');
+                        setLoading(false);
+                    } else {
+                        toast.error('Failed to place order');
+                        setLoading(false);
+                    }
+                }
                 setLoading(false);
             } catch (error) {
                 console.error('Error processing payment:', error);
                 setLoading(false);
             }
         } else {
+            setLoading(true);
+            try {
+                const token = await sessionStorage.getItem('token');
+                if (token) {
+                    const config = {
+                        headers: {
+                            Authorization: `Bearer ${JSON.parse(token)}`,
+                        }
+                    }
+
+                    const data = {
+                        restaurant: user.userType === 'Vendor' ? supplier._id : restaurant._id,
+                        orderItems: user.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
+                        deliveryAddress: selectedAddress.address,
+                        subTotal: user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2),
+                        deliveryFee,
+                        totalAmount: parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
+                        paymentMethod,
+                        paymentStatus: 'Pending',
+                        orderStatus: 'Pending',
+                        orderNote,
+                    };
+
+                    const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
+                    if (response.status === 200) {
+                        toast.success('Order placed successfully');
+                        navigate('/');
+                        setLoading(false);
+                    } else {
+                        toast.error('Failed to place order');
+                        setLoading(false);
+                    }
+                }
+            } catch (error) {
+                toast.error('An error occurred. Please try again.');
+                console.error(error);
+                setLoading(false);
+            }
         }
     };
 
@@ -307,6 +358,8 @@ const CheckOutPage = () => {
                             fullWidth
                             rows={4}
                             placeholder='Add your note here...'
+                            value={orderNote}
+                            onChange={(e) => setOrderNote(e.target.value)}
                             InputProps={{
                                 sx: {
                                     fontFamily: 'regular',
