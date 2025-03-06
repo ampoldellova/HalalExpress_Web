@@ -50,10 +50,11 @@ const CheckOutPage = () => {
     const [addresses, setAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [distanceTime, setDistanceTime] = useState({});
-    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState('standard');
+    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState('pickup');
     const [editUserDetails, setEditUserDetails] = useState(false);
     const [openAddAddressModal, setOpenAddAddressModal] = useState(false);
     const [deliveryFee, setDeliveryFee] = useState(0);
+    const [standardFee, setStandardFee] = useState(0);
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('cod');
     const [orderNote, setOrderNote] = useState('');
@@ -272,7 +273,12 @@ const CheckOutPage = () => {
             ).then((result) => {
                 if (result) {
                     setDistanceTime(result);
-                    setDeliveryFee(result.finalPrice);
+                    if (selectedDeliveryOption === 'standard') {
+                        setDeliveryFee(result.finalPrice);
+                    } else {
+                        setDeliveryFee(0);
+                    }
+                    setStandardFee(result.finalPrice);
                 }
             });
         }
@@ -283,7 +289,7 @@ const CheckOutPage = () => {
     };
 
     const totalTime = distanceTime.duration + GoogleApiServices.extractNumbers(user.userType === 'Vendor' ? supplier?.time : restaurant?.time)[0];
-
+    console.log(selectedDeliveryOption);
     return (
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
@@ -391,7 +397,7 @@ const CheckOutPage = () => {
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Options</Typography>
-                        {restaurant?.delivery ? (
+                        {restaurant?.delivery || supplier?.delivery ? (
                             <>
                                 <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -400,8 +406,15 @@ const CheckOutPage = () => {
                                             checked={selectedDeliveryOption === 'standard'}
                                             onChange={() => handleDeliveryOptionChange('standard')}
                                         />
-                                        <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard </Typography>
-                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: { xs: 365, md: 575 } }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard </Typography>
+                                                <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
+                                            </Box>
+                                            <Box sx={{ borderRadius: 8, bgcolor: COLORS.secondary, px: 1 }}>
+                                                <Typography sx={{ fontFamily: 'regular', color: COLORS.white, fontSize: 16 }}> + ₱ {standardFee}</Typography>
+                                            </Box>
+                                        </Box>
                                     </Box>
                                 </Box>
                                 <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
