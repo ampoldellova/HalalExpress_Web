@@ -208,12 +208,9 @@ const CartDrawer = ({ onClick }) => {
         }
     };
 
-
     useEffect(() => {
         { user && user.userType === 'Vendor' ? getVendorCartItems() : getCartItems() }
-    }, []);
-
-    console.log(vendorCart)
+    }, [cartItems, vendorCartItems]);
 
     return (
         <Box sx={{ width: 500 }}>

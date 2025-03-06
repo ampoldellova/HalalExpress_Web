@@ -56,7 +56,7 @@ const CheckOutPage = () => {
     const [deliveryFee, setDeliveryFee] = useState(0);
     const [standardFee, setStandardFee] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('cod');
+    const [paymentMethod, setPaymentMethod] = useState(selectedDeliveryOption === 'pickup' ? 'Pay at the counter' : 'cod');
     const [orderNote, setOrderNote] = useState('');
 
     const navigate = useNavigate();
@@ -163,8 +163,10 @@ const CheckOutPage = () => {
         setSelectedDeliveryOption(option);
         if (option === 'pickup') {
             setDeliveryFee(0);
+            setPaymentMethod('Pay at the counter');
         } else {
             setDeliveryFee(distanceTime.finalPrice);
+            setPaymentMethod('cod');
         }
     };
 
@@ -172,14 +174,14 @@ const CheckOutPage = () => {
         if (paymentMethod === 'gcash') {
             setLoading(true);
             try {
-                const amount = parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
+                const amount = parseFloat(user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
                 const paymentIntent = await createPaymentIntent(amount);
                 const paymentMethodResponse = await createPaymentMethod(phone, email, username);
                 const returnUrl = 'http://localhost:3000/';
                 const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, returnUrl);
                 window.location.href = response.data.attributes.next_action.redirect.url;
-
                 const token = await sessionStorage.getItem('token');
+
                 if (token) {
                     const config = {
                         headers: {
@@ -188,29 +190,41 @@ const CheckOutPage = () => {
                     }
 
                     const data = {
-                        restaurant: user.userType === 'Vendor' ? supplier._id : restaurant._id,
-                        orderItems: user.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
-                        deliveryAddress: selectedAddress.address,
-                        subTotal: user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2),
+                        restaurant: user?.userType === 'Vendor' ? supplier?._id : restaurant?._id,
+                        orderItems: user?.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
+                        deliveryOption: selectedDeliveryOption,
+                        deliveryAddress: selectedDeliveryOption === 'standard' ? selectedAddress?.address : '',
+                        subTotal: user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2),
                         deliveryFee,
-                        totalAmount: parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
+                        totalAmount: parseFloat(user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
                         paymentMethod,
                         paymentStatus: 'Paid',
                         orderStatus: 'Pending',
                         orderNote,
                     };
 
-                    const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
-                    if (response.status === 200) {
-                        toast.success('Order placed successfully');
-                        navigate('/orders');
-                        setLoading(false);
+                    if (user?.userType === 'Vendor') {
+                        const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, data, config);
+                        if (response.status === 200) {
+                            toast.success('Order placed successfully');
+                            navigate('/');
+                            setLoading(false);
+                        } else {
+                            toast.error('Failed to place order');
+                            setLoading(false);
+                        }
                     } else {
-                        toast.error('Failed to place order');
-                        setLoading(false);
+                        const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
+                        if (response.status === 200) {
+                            toast.success('Order placed successfully');
+                            navigate('/');
+                            setLoading(false);
+                        } else {
+                            toast.error('Failed to place order');
+                            setLoading(false);
+                        }
                     }
                 }
-                setLoading(false);
             } catch (error) {
                 console.error('Error processing payment:', error);
                 setLoading(false);
@@ -227,26 +241,39 @@ const CheckOutPage = () => {
                     }
 
                     const data = {
-                        restaurant: user.userType === 'Vendor' ? supplier._id : restaurant._id,
-                        orderItems: user.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
-                        deliveryAddress: selectedAddress.address,
-                        subTotal: user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2),
+                        restaurant: user?.userType === 'Vendor' ? supplier?._id : restaurant?._id,
+                        orderItems: user?.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
+                        deliveryOption: selectedDeliveryOption,
+                        deliveryAddress: selectedDeliveryOption === 'standard' ? selectedAddress?.address : '',
+                        subTotal: user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2),
                         deliveryFee,
-                        totalAmount: parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
+                        totalAmount: parseFloat(user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
                         paymentMethod,
                         paymentStatus: 'Pending',
                         orderStatus: 'Pending',
                         orderNote,
                     };
 
-                    const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
-                    if (response.status === 200) {
-                        toast.success('Order placed successfully');
-                        navigate('/');
-                        setLoading(false);
+                    if (user.userType === 'Vendor') {
+                        const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, data, config);
+                        if (response.status === 200) {
+                            toast.success('Order placed successfully');
+                            navigate('/');
+                            setLoading(false);
+                        } else {
+                            toast.error('Failed to place order');
+                            setLoading(false);
+                        }
                     } else {
-                        toast.error('Failed to place order');
-                        setLoading(false);
+                        const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
+                        if (response.status === 200) {
+                            toast.success('Order placed successfully');
+                            navigate('/');
+                            setLoading(false);
+                        } else {
+                            toast.error('Failed to place order');
+                            setLoading(false);
+                        }
                     }
                 }
             } catch (error) {
@@ -289,18 +316,50 @@ const CheckOutPage = () => {
     };
 
     const totalTime = distanceTime.duration + GoogleApiServices.extractNumbers(user.userType === 'Vendor' ? supplier?.time : restaurant?.time)[0];
-    console.log(selectedDeliveryOption);
+
     return (
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
                 <Grid2 item xs={12} md={6}>
-                    <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
-                        <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Address</Typography>
-                        <Typography sx={{ fontFamily: 'bold', fontSize: 16, mb: 2 }}>Saved addresses: </Typography>
 
-                        {addresses.map((address) => (
+                    {selectedDeliveryOption === 'standard' ? (
+                        <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
+                            <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Address</Typography>
+                            <Typography sx={{ fontFamily: 'bold', fontSize: 16, mb: 2 }}>Saved addresses: </Typography>
+
+                            {addresses.map((address) => (
+                                <Box
+                                    key={address._id}
+                                    sx={{
+                                        mb: 2,
+                                        border: 1,
+                                        borderRadius: 3,
+                                        p: 2,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        flexDirection: 'row',
+                                        borderColor: COLORS.gray2,
+                                        '&:hover': { borderColor: COLORS.black },
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Radio
+                                            sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
+                                            checked={selectedAddress?._id === address._id}
+                                            onChange={() => setSelectedAddress(address)}
+                                        />
+                                        <Box component='img' src={locationImage} sx={{ width: 20, height: 20, mx: 1 }} />
+                                        <Typography sx={{ fontFamily: 'regular', fontSize: 14, width: 450 }}>{address.address}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <EditAddressModal userAddress={address} fetchUserAddresses={fetchUserAddresses} />
+                                        <DeleteAddressModal address={address} fetchUserAddresses={fetchUserAddresses} />
+                                    </Box>
+                                </Box>
+                            ))}
+
                             <Box
-                                key={address._id}
                                 sx={{
                                     mb: 2,
                                     border: 1,
@@ -311,89 +370,62 @@ const CheckOutPage = () => {
                                     justifyContent: 'space-between',
                                     flexDirection: 'row',
                                     borderColor: COLORS.gray2,
-                                    '&:hover': { borderColor: COLORS.black },
+                                    color: COLORS.gray,
+                                    cursor: 'pointer',
+                                    '&:hover': {
+                                        borderColor: COLORS.black,
+                                        color: COLORS.black,
+                                        '& .icon, & .text': {
+                                            color: COLORS.black,
+                                        },
+                                    },
                                 }}
+                                onClick={handleOpenAddAddressModal}
                             >
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Radio
-                                        sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
-                                        checked={selectedAddress?._id === address._id}
-                                        onChange={() => setSelectedAddress(address)}
-                                    />
-                                    <Box component='img' src={locationImage} sx={{ width: 20, height: 20, mx: 1 }} />
-                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, width: 450 }}>{address.address}</Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <EditAddressModal userAddress={address} fetchUserAddresses={fetchUserAddresses} />
-                                    <DeleteAddressModal address={address} fetchUserAddresses={fetchUserAddresses} />
+                                    <AddCircleOutlineIcon className='icon' sx={{ mr: 1, color: COLORS.gray }} />
+                                    <Typography className='text' sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>Add address</Typography>
                                 </Box>
                             </Box>
-                        ))}
 
-                        <Box
-                            sx={{
-                                mb: 2,
-                                border: 1,
-                                borderRadius: 3,
-                                p: 2,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                flexDirection: 'row',
-                                borderColor: COLORS.gray2,
-                                color: COLORS.gray,
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    borderColor: COLORS.black,
-                                    color: COLORS.black,
-                                    '& .icon, & .text': {
-                                        color: COLORS.black,
+                            <TextField
+                                multiline
+                                fullWidth
+                                rows={4}
+                                placeholder='Add your note here...'
+                                value={orderNote}
+                                onChange={(e) => setOrderNote(e.target.value)}
+                                InputProps={{
+                                    sx: {
+                                        fontFamily: 'regular',
+                                        fontSize: 16,
                                     },
-                                },
-                            }}
-                            onClick={handleOpenAddAddressModal}
-                        >
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <AddCircleOutlineIcon className='icon' sx={{ mr: 1, color: COLORS.gray }} />
-                                <Typography className='text' sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>Add address</Typography>
-                            </Box>
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        bgcolor: COLORS.offwhite,
+                                        borderRadius: 3,
+                                        '& fieldset': {
+                                            borderColor: COLORS.gray2,
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: COLORS.secondary,
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: COLORS.secondary,
+                                        },
+                                    },
+                                    '& .MuiInputLabel-root': {
+                                        fontFamily: 'regular',
+                                        fontSize: 16,
+                                    },
+                                }}
+                            />
                         </Box>
-
-                        <TextField
-                            multiline
-                            fullWidth
-                            rows={4}
-                            placeholder='Add your note here...'
-                            value={orderNote}
-                            onChange={(e) => setOrderNote(e.target.value)}
-                            InputProps={{
-                                sx: {
-                                    fontFamily: 'regular',
-                                    fontSize: 16,
-                                },
-                            }}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    bgcolor: COLORS.offwhite,
-                                    borderRadius: 3,
-                                    '& fieldset': {
-                                        borderColor: COLORS.gray2,
-                                    },
-                                    '&:hover fieldset': {
-                                        borderColor: COLORS.secondary,
-                                    },
-                                    '&.Mui-focused fieldset': {
-                                        borderColor: COLORS.secondary,
-                                    },
-                                },
-                                '& .MuiInputLabel-root': {
-                                    fontFamily: 'regular',
-                                    fontSize: 16,
-                                },
-                            }}
-                        />
-
-                    </Box>
+                    ) : (
+                        <>
+                        </>
+                    )}
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Options</Typography>
@@ -408,12 +440,16 @@ const CheckOutPage = () => {
                                         />
                                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: { xs: 365, md: 575 } }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard </Typography>
-                                                <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
+                                                <Typography sx={{ fontFamily: 'medium', fontSize: 16, mr: 1 }}>Standard Delivery</Typography>
+                                                {selectedDeliveryOption === 'standard' && (
+                                                    <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 16 }}>({totalTime.toFixed(0)} mins)</Typography>
+                                                )}
                                             </Box>
-                                            <Box sx={{ borderRadius: 8, bgcolor: COLORS.secondary, px: 1 }}>
-                                                <Typography sx={{ fontFamily: 'regular', color: COLORS.white, fontSize: 16 }}> + ₱ {standardFee}</Typography>
-                                            </Box>
+                                            {selectedDeliveryOption === 'standard' && (
+                                                <Box sx={{ borderRadius: 8, bgcolor: COLORS.secondary, px: 1 }}>
+                                                    <Typography sx={{ fontFamily: 'regular', color: COLORS.white, fontSize: 16 }}> + ₱ {standardFee}</Typography>
+                                                </Box>
+                                            )}
                                         </Box>
                                     </Box>
                                 </Box>
@@ -692,25 +728,51 @@ const CheckOutPage = () => {
 
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 } }}>
                         <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Payment Options</Typography>
-                        <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Radio
-                                    sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
-                                    checked={paymentMethod === 'cod'}
-                                    onChange={() => setPaymentMethod('cod')}
-                                />
-                                <Box component='img' src={cash} sx={{ width: 30, height: 30, mx: 1 }} />
-                                <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>Cash On Delivery</Typography>
+                        {selectedDeliveryOption === 'standard' ? (
+                            <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Radio
+                                        sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
+                                        checked={paymentMethod === 'cod'}
+                                        onChange={() => setPaymentMethod('cod')}
+                                    />
+                                    <Box component='img' src={cash} sx={{ width: 30, height: 30, mx: 1 }} />
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>
+                                        Cash On Delivery
+                                    </Typography>
+                                </Box>
+                                {paymentMethod === 'cod' ? (
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray, mt: 2 }}>
+                                        Consider payment upon ordering for contactless delivery. You cant pay by a card to the rider upon delivery.
+                                    </Typography>
+                                ) : (
+                                    <>
+                                    </>
+                                )}
                             </Box>
-                            {paymentMethod === 'cod' ? (
-                                <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray, mt: 2 }}>
-                                    Consider payment upon ordering for contactless delivery. You can't pay by a card to the rider upon delivery.
-                                </Typography>
-                            ) : (
-                                <>
-                                </>
-                            )}
-                        </Box>
+                        ) : (
+                            <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Radio
+                                        sx={{ p: 0, '&.Mui-checked': { color: COLORS.primary } }}
+                                        checked={paymentMethod === 'Pay at the counter'}
+                                        onChange={() => setPaymentMethod('Pay at the counter')}
+                                    />
+                                    <Box component='img' src={cash} sx={{ width: 30, height: 30, mx: 1 }} />
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14 }}>
+                                        Pay at the counter
+                                    </Typography>
+                                </Box>
+                                {paymentMethod === 'Pay at the counter' ? (
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray, mt: 2 }}>
+                                        You can place your order online and make the payment when you pick up your order at the restaurant. This allows you to conveniently reserve your items and pay in person.
+                                    </Typography>
+                                ) : (
+                                    <>
+                                    </>
+                                )}
+                            </Box>
+                        )}
                         <Box sx={{ mb: 2, border: 1, borderRadius: 3, p: 2, flexDirection: 'row', borderColor: COLORS.gray2, '&:hover': { borderColor: COLORS.black } }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Radio
@@ -770,7 +832,7 @@ const CheckOutPage = () => {
                                                     <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>{item.quantity}x {item.productId.title}</Typography>
                                                     {item.instructions ? (
                                                         <>
-                                                            < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2 }}>
+                                                            < Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, ml: 2, width: 250 }}>
                                                                 - {item.instructions}
                                                             </Typography>
                                                         </>

@@ -1,26 +1,22 @@
 const mongoose = require('mongoose')
 const populate = require("mongoose-autopopulate");
 
-const orderSchema = new mongoose.Schema({
+const vendorOrderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         autopopulate: true,
     },
-    restaurant: {
+    supplier: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Restaurant',
+        ref: 'Supplier',
         autopopulate: true,
     },
     orderItems: [{
-        foodId: {
+        productId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Food',
+            ref: 'ingredients',
             autopopulate: true,
-        },
-        additives: {
-            type: [],
-            default: ''
         },
         instructions: {
             type: String,
@@ -74,5 +70,5 @@ const orderSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-orderSchema.plugin(populate);
-module.exports = mongoose.model('Order', orderSchema)
+vendorOrderSchema.plugin(populate);
+module.exports = mongoose.model('VendorOrder', vendorOrderSchema)

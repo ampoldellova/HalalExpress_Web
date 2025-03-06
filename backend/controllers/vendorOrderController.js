@@ -1,5 +1,5 @@
-const Order = require('../models/Order')
-const Cart = require('../models/Cart')
+const VendorOrder = require('../models/VendorOrder')
+const VendorCart = require('../models/VendorCart')
 
 module.exports = {
     checkoutOrder: async (req, res) => {
@@ -19,15 +19,15 @@ module.exports = {
         } = req.body;
 
         try {
-            const cart = await Cart.findOne({ userId }).populate('cartItems.foodId');
+            const vendorCart = await VendorCart.findOne({ userId }).populate('cartItems.productId');
 
-            if (!cart) {
-                return res.status(404).json({ status: false, message: 'Cart not found' });
+            if (!vendorCart) {
+                return res.status(404).json({ status: false, message: 'Vendor Cart not found' });
             }
-            console.log(subTotal)
-            const newOrder = new Order({
+
+            const newOrder = new VendorOrder({
                 userId,
-                restaurant,
+                supplier: restaurant,
                 orderItems,
                 deliveryOption,
                 deliveryAddress,
@@ -42,9 +42,9 @@ module.exports = {
 
             await newOrder.save();
 
-            cart.cartItems = [];
-            cart.totalAmount = 0;
-            await cart.save();
+            vendorCart.cartItems = [];
+            vendorCart.totalAmount = 0;
+            await vendorCart.save();
 
             res.status(200).json({ status: true, message: 'Order placed successfully', order: newOrder });
         } catch (error) {
@@ -52,21 +52,4 @@ module.exports = {
             res.status(500).json({ status: false, message: error.message });
         }
     },
-
-    getUserOrders: async (req, res) => {
-        const userId = req.user.id;
-
-        try {
-            const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-
-            if (!orders) {
-                return res.status(404).json({ status: false, message: 'No order found' });
-            }
-
-            res.status(200).json({ status: true, orders });
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ status: false, message: error.message });
-        }
-    }
 };
