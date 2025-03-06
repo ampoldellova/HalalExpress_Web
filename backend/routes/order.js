@@ -3,5 +3,6 @@ const orderController = require('../controllers/orderController');
 const { verifyAndAuthorization } = require('../middleware/verifyToken');
 
 router.post('/check-out', verifyAndAuthorization, orderController.checkoutOrder);
+router.get('/', verifyAndAuthorization, orderController.getUserOrders);
 
 module.exports = router;

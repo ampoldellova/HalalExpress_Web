@@ -194,8 +194,8 @@ const CheckOutPage = () => {
                         deliveryFee,
                         totalAmount: parseFloat(user.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee),
                         paymentMethod,
-                        paymentStatus: 'Pending',
-                        orderStatus: 'Paid',
+                        paymentStatus: 'Paid',
+                        orderStatus: 'Pending',
                         orderNote,
                     };
 

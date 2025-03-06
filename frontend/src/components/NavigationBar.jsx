@@ -16,6 +16,7 @@ import LoginModal from './Users/LoginModal';
 import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import { useNavigate } from 'react-router-dom';
 import CartDrawer from './Cart/CartDrawer';
 import axios from 'axios';
@@ -203,6 +204,12 @@ export default function NavigationBar() {
                                         <Person2OutlinedIcon sx={{ color: COLORS.gray }} />
                                         <Typography sx={styles.menuItemText}>
                                             Profile
+                                        </Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={() => { navigate(`/order-page/${user._id}`); handleCloseUserMenu(); }}>
+                                        <ReceiptLongOutlinedIcon sx={{ color: COLORS.gray }} />
+                                        <Typography sx={styles.menuItemText}>
+                                            Orders
                                         </Typography>
                                     </MenuItem>
                                     <MenuItem onClick={handleLogout}>

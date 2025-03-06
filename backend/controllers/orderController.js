@@ -49,5 +49,22 @@ module.exports = {
             console.log(error);
             res.status(500).json({ status: false, message: error.message });
         }
+    },
+
+    getUserOrders: async (req, res) => {
+        const userId = req.user.id;
+
+        try {
+            const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+
+            if (!orders) {
+                return res.status(404).json({ status: false, message: 'No order found' });
+            }
+
+            res.status(200).json({ status: true, orders });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: false, message: error.message });
+        }
     }
 };
