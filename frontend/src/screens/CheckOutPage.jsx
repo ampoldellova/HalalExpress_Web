@@ -321,7 +321,6 @@ const CheckOutPage = () => {
         <Container maxWidth='lg'>
             <Grid2 container spacing={2} sx={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', mt: 4 }}>
                 <Grid2 item xs={12} md={6}>
-
                     {selectedDeliveryOption === 'standard' ? (
                         <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                             <Typography sx={{ fontFamily: 'bold', fontSize: 24, mb: 2 }}>Delivery Address</Typography>

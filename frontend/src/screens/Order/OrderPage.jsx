@@ -64,13 +64,13 @@ const OrderPage = () => {
             ) : (
                 <>
                     {pendingOrders.map(order => (
-                        <Box key={order._id} onClick={() => navigate(`/order-detail/${order._id}`)} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
+                        <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
                             <Box sx={{ display: 'flex' }}>
                                 <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
                                 <Box sx={{ ml: 2, width: 800 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Typography sx={{ fontFamily: 'bold', fontSize: 18, mb: 1 }}>{order.restaurant.title}</Typography>
-                                        <Typography sx={{ fontFamily: 'bold', fontSize: 18, mb: 1 }}>₱ {order.totalAmount.toFixed(2)}</Typography>
+                                        <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{order.restaurant.title}</Typography>
+                                        <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>₱ {order.totalAmount.toFixed(2)}</Typography>
                                     </Box>
                                     <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>
                                         Ordered #: {order._id}
@@ -79,12 +79,7 @@ const OrderPage = () => {
                                         Ordered At: {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, {new Date(order.createdAt).toLocaleTimeString()}
                                     </Typography>
                                     {order.orderItems.map(item => (
-                                        <>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                                <Box component='img' src={item.foodId.imageUrl.url} sx={{ height: 40, width: 40, objectFit: 'cover', borderRadius: 3 }} />
-                                                <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {item.foodId.title}</Typography>
-                                            </Box>
-                                        </>
+                                        <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {item.foodId.title}</Typography>
                                     ))}
                                 </Box>
                             </Box>
