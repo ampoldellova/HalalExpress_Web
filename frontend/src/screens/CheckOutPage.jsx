@@ -176,6 +176,7 @@ const CheckOutPage = () => {
             try {
                 const amount = parseFloat(user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
                 const paymentIntent = await createPaymentIntent(amount);
+                console.log('Payment intent:', paymentIntent);
                 const paymentMethodResponse = await createPaymentMethod(phone, email, username);
                 const returnUrl = 'http://localhost:3000/';
                 const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, returnUrl);
@@ -190,6 +191,7 @@ const CheckOutPage = () => {
                     }
 
                     const data = {
+                        paymentIntentId: paymentIntent.data.id,
                         restaurant: user?.userType === 'Vendor' ? supplier?._id : restaurant?._id,
                         orderItems: user?.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
                         deliveryOption: selectedDeliveryOption,
@@ -241,6 +243,7 @@ const CheckOutPage = () => {
                     }
 
                     const data = {
+                        paymentIntentId: 'No online payment intent',
                         restaurant: user?.userType === 'Vendor' ? supplier?._id : restaurant?._id,
                         orderItems: user?.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
                         deliveryOption: selectedDeliveryOption,

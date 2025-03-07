@@ -51,19 +51,63 @@ const OrderPage = () => {
 
     const pendingOrders = orders.filter(order => order.orderStatus === 'Pending');
     const pastOrders = orders.filter(order => order.orderStatus === 'Delivered');
+    const cancelledOrders = orders.filter(order => order.orderStatus === 'cancelled by customer');
     console.log(pendingOrders);
 
     return (
         <Container maxWidth='sm' >
-            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Active Orders</Typography>
 
             {pendingOrders.length === 0 ? (
-                <Typography sx={{ fontFamily: 'regular', fontSize: 16, mt: 3 }}>
-                    You have no active orders.
-                </Typography>
+                <>
+                </>
             ) : (
                 <>
                     {pendingOrders.map(order => (
+                        <>
+                            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Active Orders</Typography>
+                            <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
+                                <Box sx={{ display: 'flex' }}>
+                                    <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
+                                    <Box sx={{ ml: 2, width: 800 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{order.restaurant.title}</Typography>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>₱ {order.totalAmount.toFixed(2)}</Typography>
+                                        </Box>
+                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>
+                                            Ordered #: {order._id}
+                                        </Typography>
+                                        <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mb: 1 }}>
+                                            Ordered At: {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, {new Date(order.createdAt).toLocaleTimeString()}
+                                        </Typography>
+                                        {order.orderItems.map(item => (
+                                            <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {item.foodId.title}</Typography>
+                                        ))}
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </>
+                    ))}
+                </>
+            )}
+
+            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Past Orders</Typography>
+
+            {pastOrders.length === 0 ? (
+                <Typography sx={{ fontFamily: 'regular', fontSize: 16, my: 3 }}>
+                    You have no past orders.
+                </Typography>
+            ) : (
+                <>
+                </>
+            )}
+
+            {cancelledOrders.length === 0 ? (
+                <>
+                </>
+            ) : (
+                <>
+                    <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Cancelled Orders</Typography>
+                    {cancelledOrders.map(order => (
                         <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
                             <Box sx={{ display: 'flex' }}>
                                 <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
@@ -85,17 +129,6 @@ const OrderPage = () => {
                             </Box>
                         </Box>
                     ))}
-                </>
-            )}
-
-            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Past Orders</Typography>
-
-            {pastOrders.length === 0 ? (
-                <Typography sx={{ fontFamily: 'regular', fontSize: 16, my: 3 }}>
-                    You have no past orders.
-                </Typography>
-            ) : (
-                <>
                 </>
             )}
         </Container>
