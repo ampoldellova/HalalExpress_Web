@@ -44,7 +44,6 @@ const attachPaymentMethod = async (paymentIntentId, paymentMethodId, returnUrl) 
         }
     );
 
-    console.log(response.data);
     return response.data;
 };
 
@@ -74,4 +73,17 @@ const createPaymentMethod = async (phone, email, name) => {
     return response.data;
 };
 
-export { createPaymentIntent, attachPaymentMethod, createPaymentMethod };
+const retrievePaymentIntent = async (paymentIntentId) => {
+    const response = await axios.get(
+        `${PAYMONGO_API_URL}/payment_intents/${paymentIntentId}`,
+        {
+            headers: {
+                Authorization: `Basic ${btoa(process.env.REACT_APP_PAYMONGO_SECRET_KEY)}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+    return response.data;
+}
+
+export { createPaymentIntent, attachPaymentMethod, createPaymentMethod, retrievePaymentIntent };

@@ -52,7 +52,6 @@ const OrderPage = () => {
     const pendingOrders = orders.filter(order => order.orderStatus === 'Pending');
     const pastOrders = orders.filter(order => order.orderStatus === 'Delivered');
     const cancelledOrders = orders.filter(order => order.orderStatus === 'cancelled by customer');
-    console.log(pendingOrders);
 
     return (
         <Container maxWidth='sm' >

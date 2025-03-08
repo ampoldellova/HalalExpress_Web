@@ -88,29 +88,6 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Order is already cancelled' });
             }
 
-            if (order.paymentStatus === 'Paid') {
-                const refundResponse = await axios.post('https://api.paymongo.com/v1/refunds', {
-                    data: {
-                        attributes: {
-                            amount: order.totalAmount * 100,
-                            payment_intent_id: order.paymentIntentId
-                        }
-                    }
-                }, {
-                    headers: {
-                        'Authorization': `Basic ${Buffer.from(process.env.PAYMONGO_SECRET_KEY).toString('base64')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (refundResponse.data.data.attributes.status === 'succeeded') {
-                    order.paymentStatus = 'Refunded';
-                } else {
-                    console.log('Refund failed:', refundResponse.data);
-                    return res.status(500).json({ status: false, message: 'Refund failed', error: refundResponse.data });
-                }
-            }
-
             order.orderStatus = 'cancelled by customer';
             await order.save();
 

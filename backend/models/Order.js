@@ -57,7 +57,6 @@ const orderSchema = new mongoose.Schema({
     },
     paymentIntentId: {
         type: String,
-        required: true
     },
     paymentMethod: {
         type: String,

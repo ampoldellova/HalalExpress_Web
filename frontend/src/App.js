@@ -11,6 +11,7 @@ import Profile from './screens/User/Profile';
 import CheckOutPage from './screens/CheckOutPage';
 import OrderPage from './screens/Order/OrderPage';
 import OrderDetails from './screens/Order/OrderDetails';
+import PaymentConfirmation from './screens/PaymentConfirmation';
 
 function App() {
   const user = getUser();
@@ -28,6 +29,7 @@ function App() {
           <Route path="/checkout/:id" element={<CheckOutPage />} />
           <Route path="/order-page/:id" element={<OrderPage />} />
           <Route path="/order-detail/:id" element={<OrderDetails />} />
+          <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
         </Routes>
       </Router>
       <ToastContainer position='bottom-right' stacked limit={5} />

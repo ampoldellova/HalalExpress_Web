@@ -211,7 +211,7 @@ const OrderDetails = () => {
 
                         {order.orderStatus === 'cancelled by customer' && (
                             <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 2 }}>
-                                Your order has been cancelled. Please wait for the refund to be processed.
+                                Your have cancelled your order. {order.paymentStatus === 'Paid' ? 'Please wait for the refund to be processed.' : 'No payment has been made.'}
                             </Typography>
                         )}
                     </Box>
