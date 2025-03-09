@@ -40,11 +40,12 @@ const PaymentConfirmation = () => {
                 } else {
                     const response = await axios.post(`http://localhost:6002/api/orders/check-out`, parsedData, config);
                     if (response.status === 200) {
-                        navigate('/')
+                        navigate(`/order-page/${user._id}`)
                         toast.success('Order placed successfully');
                     }
                 }
             } else {
+                navigate('/');
                 toast.error('Payment failed. Please try again.');
             }
         } else {
