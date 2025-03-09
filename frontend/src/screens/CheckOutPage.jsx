@@ -229,7 +229,7 @@ const CheckOutPage = () => {
                         const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, data, config);
                         if (response.status === 200) {
                             toast.success('Order placed successfully');
-                            navigate('/');
+                            navigate(`/order-page/${user._id}`);
                             setLoading(false);
                         } else {
                             toast.error('Failed to place order');
@@ -239,7 +239,7 @@ const CheckOutPage = () => {
                         const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
                         if (response.status === 200) {
                             toast.success('Order placed successfully');
-                            navigate('/');
+                            navigate(`/order-page/${user._id}`);
                             setLoading(false);
                         } else {
                             toast.error('Failed to place order');
