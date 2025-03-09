@@ -51,6 +51,9 @@ const vendorOrderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    paymentIntentId: {
+        type: String,
+    },
     paymentMethod: {
         type: String,
         required: true
