@@ -50,7 +50,7 @@ const OrderDetails = () => {
             toast.error(error.response.data.message);
         }
     }
-
+    console.log(order.paymentMethod, order.paymentStatus)
     return (
         <Container maxWidth='lg'>
             <Typography variant='h4' sx={{ mt: 3, fontFamily: 'bold' }}>Order Details</Typography>

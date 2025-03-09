@@ -11,7 +11,7 @@ const PaymentConfirmation = () => {
     const navigate = useNavigate();
     const location = useLocation();
     let parsedData = {};
-    const hasFetchedPayment = useRef(false); // useRef to track if the function has been called
+    const hasFetchedPayment = useRef(false);
 
     const retrievePayment = async () => {
         const queryParams = new URLSearchParams(location.search);
@@ -21,6 +21,7 @@ const PaymentConfirmation = () => {
 
         if (paymentIntentId) {
             const response = await retrievePaymentIntent(paymentIntentId);
+            parsedData.paymentId = response.data.attributes.payments[0].id;
 
             if (response.data.attributes.status === 'succeeded') {
                 const token = sessionStorage.getItem('token');

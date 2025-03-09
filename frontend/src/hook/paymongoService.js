@@ -84,7 +84,6 @@ const retrievePaymentIntent = async (paymentIntentId) => {
             },
         });
 
-    console.log(response.data);
     return response.data;
 }
 

@@ -179,7 +179,6 @@ const CheckOutPage = () => {
                 const paymentIntent = await createPaymentIntent(amount);
                 const paymentMethodResponse = await createPaymentMethod(phone, email, username);
                 const data = {
-                    paymentIntentId: paymentIntent.data.id,
                     restaurant: user?.userType === 'Vendor' ? supplier?._id : restaurant?._id,
                     orderItems: user?.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
                     deliveryOption: selectedDeliveryOption,
@@ -211,7 +210,7 @@ const CheckOutPage = () => {
                     }
 
                     const data = {
-                        paymentIntentId: 'No online payment intent',
+                        paymentId: 'No online payment',
                         restaurant: user?.userType === 'Vendor' ? supplier?._id : restaurant?._id,
                         orderItems: user?.userType === 'Vendor' ? vendorCart?.cartItems : cart?.cartItems,
                         deliveryOption: selectedDeliveryOption,
