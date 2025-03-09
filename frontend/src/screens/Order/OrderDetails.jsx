@@ -1,5 +1,5 @@
 import { Box, Button, Container, Divider, Grid2, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import Gcash from '../../assets/images/gcash.png';
@@ -35,42 +35,6 @@ const OrderDetails = () => {
     const handleOpenCancelOrderModal = () => setOpenCancelOrderModal(true);
     const handleCloseCancelOrderModal = () => setOpenCancelOrderModal(false);
 
-    // const cancelOrder = async () => {
-    //     try {
-    //         const token = await sessionStorage.getItem('token');
-    //         if (token) {
-    //             const config = {
-    //                 headers: {
-    //                     Authorization: `Bearer ${JSON.parse(token)}`,
-    //                 }
-    //             }
-
-
-    //             if (order.paymentStatus === 'Paid' && order.paymentMethod === 'gcash') {
-    //                 const refundPayment = await axios.post(`${process.env.REACT_APP_PAYMONGO_URL}/refunds`, {
-    //                     data: {
-    //                         attributes: {
-    //                             amount: order.subTotal * 100,
-    //                             notes: 'asdasdasd',
-    //                             payment_id: 'pay_5evKTjkzcGzurgGNPLbu5PBk',
-    //                             reason: 'requested_by_customer '
-    //                         }
-    //                     }
-    //                 });
-    //             }
-
-    //             const response = await axios.post('http://localhost:6002/api/orders/cancel', { orderId: order._id }, config);
-    //             toast.success(response.data.message);
-    //             navigate(`/order-page/${user._id}`);
-    //         } else {
-    //             toast.error('You must be logged in to cancel your order');
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.response.data.message);
-    //     }
-    // }
-
-    console.log(order.paymentMethod, order.paymentStatus)
     return (
         <Container maxWidth='lg'>
             <Typography variant='h4' sx={{ mt: 3, fontFamily: 'bold' }}>Order Details</Typography>
