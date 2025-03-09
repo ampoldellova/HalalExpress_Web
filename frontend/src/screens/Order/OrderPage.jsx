@@ -23,7 +23,6 @@ const COLORS = {
 const OrderPage = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = React.useState([]);
-    const [loading, setLoading] = React.useState(true);
 
     const fetchUserOrders = async () => {
         try {
@@ -56,14 +55,15 @@ const OrderPage = () => {
     return (
         <Container maxWidth='sm' >
 
+            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Active Orders</Typography>
             {pendingOrders.length === 0 ? (
-                <>
-                </>
+                <Typography sx={{ fontFamily: 'regular', fontSize: 16, my: 3 }}>
+                    You have no active orders.
+                </Typography>
             ) : (
                 <>
                     {pendingOrders.map(order => (
                         <>
-                            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Active Orders</Typography>
                             <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
                                 <Box sx={{ display: 'flex' }}>
                                     <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
@@ -100,12 +100,13 @@ const OrderPage = () => {
                 </>
             )}
 
+            <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Cancelled Orders</Typography>
             {cancelledOrders.length === 0 ? (
-                <>
-                </>
+                <Typography sx={{ fontFamily: 'regular', fontSize: 16, my: 3 }}>
+                    You have no cancelled orders.
+                </Typography>
             ) : (
                 <>
-                    <Typography sx={{ fontFamily: 'bold', fontSize: 24, my: 3 }}>Cancelled Orders</Typography>
                     {cancelledOrders.map(order => (
                         <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
                             <Box sx={{ display: 'flex' }}>

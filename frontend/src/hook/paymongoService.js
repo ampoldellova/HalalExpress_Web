@@ -25,14 +25,14 @@ const createPaymentIntent = async (amount, currency = 'PHP') => {
     return response.data;
 };
 
-const attachPaymentMethod = async (paymentIntentId, paymentMethodId, returnUrl) => {
+const attachPaymentMethod = async (paymentIntentId, paymentMethodId, data) => {
     const response = await axios.post(
         `${PAYMONGO_API_URL}/payment_intents/${paymentIntentId}/attach`,
         {
             data: {
                 attributes: {
                     payment_method: paymentMethodId,
-                    return_url: returnUrl,
+                    return_url: `http://localhost:3000/payment-confirmation?data=${encodeURIComponent(JSON.stringify(data))}`,
                 },
             },
         },
@@ -44,6 +44,7 @@ const attachPaymentMethod = async (paymentIntentId, paymentMethodId, returnUrl) 
         }
     );
 
+    console.log(response.data);
     return response.data;
 };
 
@@ -83,6 +84,7 @@ const retrievePaymentIntent = async (paymentIntentId) => {
             },
         });
 
+    console.log(response.data);
     return response.data;
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
@@ -8,9 +8,10 @@ import axios from 'axios';
 
 const PaymentConfirmation = () => {
     const user = getUser();
-    const location = useLocation();
     const navigate = useNavigate();
+    const location = useLocation();
     let parsedData = {};
+    const hasFetchedPayment = useRef(false); // useRef to track if the function has been called
 
     const retrievePayment = async () => {
         const queryParams = new URLSearchParams(location.search);
@@ -22,42 +23,42 @@ const PaymentConfirmation = () => {
             const response = await retrievePaymentIntent(paymentIntentId);
 
             if (response.data.attributes.status === 'succeeded') {
-                const token = await sessionStorage.getItem('token');
+                const token = sessionStorage.getItem('token');
                 const config = {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(token)}`,
                     }
                 }
 
-                if (user?.userType === 'Vendor') {
+                if (user.userType === 'Vendor') {
                     const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, parsedData, config);
                     if (response.status === 200) {
+                        navigate(`/order-page/${user._id}`)
                         toast.success('Order placed successfully');
-                        // navigate(`/order-page/${user._id}`);
-                    } else {
-                        toast.error('Failed to place order');
+
                     }
                 } else {
                     const response = await axios.post(`http://localhost:6002/api/orders/check-out`, parsedData, config);
                     if (response.status === 200) {
+                        navigate('/')
                         toast.success('Order placed successfully');
-                        navigate('/');
-                    } else {
-                        toast.error('Failed to place order');
                     }
                 }
-                
             } else {
                 toast.error('Payment failed. Please try again.');
             }
         } else {
             toast.error('Payment failed. Please try again.');
         }
+        console.log(parsedData);
     }
 
     useEffect(() => {
-        retrievePayment();
-    }, []); // Add an empty dependency array here
+        if (!hasFetchedPayment.current) {
+            retrievePayment();
+            hasFetchedPayment.current = true; // Set the ref to true after the function is called
+        }
+    }, []);
 
     return (
         <Loader />

@@ -47,7 +47,7 @@ const Restaurants = ({ restaurants }) => {
                                             {restaurant.title}
                                         </Typography>
                                     </Box>
-                                    <Box sx={{ ml: 'auto', borderRadius: 3, bgcolor: restaurant.isAvailable ? COLORS.primary : COLORS.red, p: 0.5 }}>
+                                    <Box sx={{ ml: 'auto', borderRadius: 3, bgcolor: restaurant.isAvailable ? COLORS.primary : COLORS.red, px: 1 }}>
                                         <Typography sx={{ color: COLORS.white, fontFamily: 'regular', fontSize: 12 }}>
                                             {restaurant.isAvailable ? 'Open' : 'Closed'}
                                         </Typography>

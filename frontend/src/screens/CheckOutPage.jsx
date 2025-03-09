@@ -174,9 +174,9 @@ const CheckOutPage = () => {
         if (paymentMethod === 'gcash') {
             setLoading(true);
             try {
-                const amount = parseFloat(user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee);
+                const amount = Math.round(parseFloat(user?.userType === 'Vendor' ? vendorCart?.totalAmount.toFixed(2) : cart?.totalAmount.toFixed(2)) + parseFloat(deliveryFee));
+                console.log(amount)
                 const paymentIntent = await createPaymentIntent(amount);
-                console.log('Payment intent:', paymentIntent);
                 const paymentMethodResponse = await createPaymentMethod(phone, email, username);
                 const data = {
                     paymentIntentId: paymentIntent.data.id,
@@ -192,42 +192,9 @@ const CheckOutPage = () => {
                     orderStatus: 'Pending',
                     orderNote,
                 };
-                const returnUrl = `http://localhost:3000/payment-confirmation?data=${encodeURIComponent(JSON.stringify(data))}`;
-                const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, returnUrl);
+                const response = await attachPaymentMethod(paymentIntent.data.id, paymentMethodResponse.data.id, data);
                 window.location.href = response.data.attributes.next_action.redirect.url;
 
-
-                // const token = await sessionStorage.getItem('token');
-
-                // if (token) {
-                //     const config = {
-                //         headers: {
-                //             Authorization: `Bearer ${JSON.parse(token)}`,
-                //         }
-                //     }
-
-                //     if (user?.userType === 'Vendor') {
-                //         const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, data, config);
-                //         if (response.status === 200) {
-                //             toast.success('Order placed successfully');
-                //             navigate('/');
-                //             setLoading(false);
-                //         } else {
-                //             toast.error('Failed to place order');
-                //             setLoading(false);
-                //         }
-                //     } else {
-                //         const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
-                //         if (response.status === 200) {
-                //             toast.success('Order placed successfully');
-                //             navigate('/');
-                //             setLoading(false);
-                //         } else {
-                //             toast.error('Failed to place order');
-                //             setLoading(false);
-                //         }
-                //     }
-                // }
             } catch (error) {
                 console.error('Error processing payment:', error);
                 setLoading(false);
