@@ -51,7 +51,6 @@ const OrderDetails = () => {
         }
     }
 
-    console.log(order);
     return (
         <Container maxWidth='lg'>
             <Typography variant='h4' sx={{ mt: 3, fontFamily: 'bold' }}>Order Details</Typography>
@@ -59,9 +58,9 @@ const OrderDetails = () => {
                 <Grid2 item xs={12} md={6}>
                     <Box sx={{ borderRadius: 3, p: 2, bgcolor: COLORS.offwhite, width: { xs: 435, md: 650 }, mb: 5 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                            <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 100, width: 100, objectFit: 'cover', borderRadius: 3 }} />
+                            <Box component='img' src={user.userType === 'Vendor' ? order.supplier.logoUrl.url : order.restaurant.logoUrl.url} sx={{ height: 100, width: 100, objectFit: 'cover', borderRadius: 3 }} />
                             <Box sx={{ ml: 2 }}>
-                                <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{order.restaurant.title}</Typography>
+                                <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{user.userType === 'Vendor' ? order.supplier.title : order.restaurant.title}</Typography>
                                 <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.gray }}>
                                     Ordered on: {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, {new Date(order.createdAt).toLocaleTimeString()}
                                 </Typography>
@@ -81,7 +80,7 @@ const OrderDetails = () => {
                                         Order from:
                                     </Typography>
                                     <Typography sx={{ fontFamily: 'medium', fontSize: 16, width: { xs: 400, md: 500 } }}>
-                                        {order.restaurant.title} - {order.restaurant.coords.address}
+                                        {user.userType === 'Vendor' ? order.supplier.title : order.restaurant.title} - {user.userType === 'Vendor' ? order.supplier.coords.address : order.restaurant.coords.address}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -110,18 +109,24 @@ const OrderDetails = () => {
                         {order.orderItems.map(item => (
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Box key={item._id} sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Typography sx={{ fontFamily: 'regular', fontSize: 16 }}>{item.quantity}x {item.foodId.title}</Typography>
-                                    {item.additives.length > 0 ? (
-                                        <>
-                                            {item.additives.map(additive => (
-                                                <Typography sx={{ fontFamily: 'regular', fontSize: 16, ml: 3, color: COLORS.gray }}>+ {additive.title}</Typography>
-                                            ))}
-                                        </>
+                                    <Typography sx={{ fontFamily: 'regular', fontSize: 16 }}>{item.quantity}x {user.userType === 'Vendor' ? item.productId.title : item.foodId.title}</Typography>
+
+                                    {item.instructions ? (
+                                        <Typography sx={{ fontFamily: 'regular', fontSize: 16, ml: 3, color: COLORS.gray }}>+ {item.instructions === '' ? 'No instructions' : item.instructions}</Typography>
                                     ) : (
                                         <>
-                                            <Typography sx={{ fontFamily: 'regular', fontSize: 16, ml: 3, color: COLORS.gray }}>- No additives</Typography>
+                                            {item.additives.length > 0 ? (
+                                                <>
+                                                    {item.additives.map(additive => (
+                                                        <Typography sx={{ fontFamily: 'regular', fontSize: 16, ml: 3, color: COLORS.gray }}>+ {additive.title}</Typography>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <Typography sx={{ fontFamily: 'regular', fontSize: 16, ml: 3, color: COLORS.gray }}>- No additives</Typography>
+                                            )}
                                         </>
                                     )}
+                                    
                                 </Box>
                                 <Typography sx={{ fontFamily: 'regular', fontSize: 16 }}>₱ {item.totalPrice.toFixed(2)}</Typography>
                             </Box>

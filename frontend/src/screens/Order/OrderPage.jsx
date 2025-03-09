@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getUser } from '../../utils/helpers';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -22,7 +23,9 @@ const COLORS = {
 
 const OrderPage = () => {
     const navigate = useNavigate();
+    const user = getUser();
     const [orders, setOrders] = React.useState([]);
+    const [vendorOrders, setVendorOrders] = React.useState([]);
 
     const fetchUserOrders = async () => {
         try {
@@ -42,15 +45,36 @@ const OrderPage = () => {
         } catch (error) {
             toast.error(error.response.data.message);
         }
-    }
+    };
+
+    const fetchVendorOrders = async () => {
+        try {
+            const token = await sessionStorage.getItem('token');
+            if (token) {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    }
+                }
+
+                const response = await axios.get('http://localhost:6002/api/vendor/orders/', config);
+                setVendorOrders(response.data.vendorOrders);
+            } else {
+                toast.error('You must be logged in to view your orders');
+            }
+        } catch (error) {
+            toast.error(error.response.data.message);
+        }
+    };
+
 
     useEffect(() => {
-        fetchUserOrders();
+        { user.userType === 'Vendor' ? fetchVendorOrders() : fetchUserOrders() };
     }, []);
 
-    const pendingOrders = orders.filter(order => order.orderStatus === 'Pending');
-    const pastOrders = orders.filter(order => order.orderStatus === 'Delivered');
-    const cancelledOrders = orders.filter(order => order.orderStatus === 'cancelled by customer');
+    const pendingOrders = (user.userType === 'Vendor' ? vendorOrders : orders)?.filter(order => order.orderStatus === 'Pending') || [];
+    const pastOrders = (user.userType === 'Vendor' ? vendorOrders : orders)?.filter(order => order.orderStatus === 'Delivered') || [];
+    const cancelledOrders = (user.userType === 'Vendor' ? vendorOrders : orders)?.filter(order => order.orderStatus === 'cancelled by customer') || [];
 
     return (
         <Container maxWidth='sm' >
@@ -66,10 +90,10 @@ const OrderPage = () => {
                         <>
                             <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
                                 <Box sx={{ display: 'flex' }}>
-                                    <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
+                                    <Box component='img' src={user.userType === 'Vendor' ? order.supplier.logoUrl.url : order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
                                     <Box sx={{ ml: 2, width: 800 }}>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{order.restaurant.title}</Typography>
+                                            <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{user.userType === 'Vendor' ? order.supplier.title : order.restaurant.title}</Typography>
                                             <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>₱ {order.totalAmount.toFixed(2)}</Typography>
                                         </Box>
                                         <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>
@@ -79,7 +103,7 @@ const OrderPage = () => {
                                             Ordered At: {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, {new Date(order.createdAt).toLocaleTimeString()}
                                         </Typography>
                                         {order.orderItems.map(item => (
-                                            <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {item.foodId.title}</Typography>
+                                            <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {user.userType === 'Vendor' ? item.productId.title : item.foodId.title}</Typography>
                                         ))}
                                     </Box>
                                 </Box>
@@ -110,10 +134,10 @@ const OrderPage = () => {
                     {cancelledOrders.map(order => (
                         <Box key={order._id} onClick={() => { navigate(`/order-detail/${order._id}`, { state: { order } }) }} sx={{ mb: 3, p: 2, borderRadius: 5, bgcolor: COLORS.offwhite, cursor: 'pointer' }}>
                             <Box sx={{ display: 'flex' }}>
-                                <Box component='img' src={order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
+                                <Box component='img' src={user.userType === 'Vendor' ? order.supplier.logoUrl.url : order.restaurant.logoUrl.url} sx={{ height: 80, width: 80, objectFit: 'cover', borderRadius: 3 }} />
                                 <Box sx={{ ml: 2, width: 800 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{order.restaurant.title}</Typography>
+                                        <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>{user.userType === 'Vendor' ? order.supplier.title : order.restaurant.title}</Typography>
                                         <Typography sx={{ fontFamily: 'bold', fontSize: 20, mb: 1 }}>₱ {order.totalAmount.toFixed(2)}</Typography>
                                     </Box>
                                     <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14 }}>
@@ -123,7 +147,7 @@ const OrderPage = () => {
                                         Ordered At: {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, {new Date(order.createdAt).toLocaleTimeString()}
                                     </Typography>
                                     {order.orderItems.map(item => (
-                                        <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {item.foodId.title}</Typography>
+                                        <Typography key={item._id} sx={{ fontFamily: 'regular', fontSize: 16, ml: 1 }}>{item.quantity}x {user.userType === 'Vendor' ? item.productId.title : item.foodId.title}</Typography>
                                     ))}
                                 </Box>
                             </Box>

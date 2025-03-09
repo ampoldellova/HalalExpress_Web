@@ -54,4 +54,21 @@ module.exports = {
             res.status(500).json({ status: false, message: error.message });
         }
     },
+
+    getVendorOrders: async (req, res) => {
+        const userId = req.user.id;
+
+        try {
+            const vendorOrders = await VendorOrder.find({ userId }).sort({ createdAt: -1 });
+
+            if (!vendorOrders) {
+                return res.status(404).json({ status: false, message: 'No order found' });
+            }
+
+            res.status(200).json({ status: true, vendorOrders });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ status: false, message: error.message });
+        }
+    },
 };
