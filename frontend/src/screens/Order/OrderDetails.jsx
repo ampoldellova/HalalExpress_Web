@@ -1,5 +1,5 @@
 import { Box, Button, Container, Divider, Grid2, Typography } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import Gcash from '../../assets/images/gcash.png';
@@ -7,6 +7,7 @@ import cash from '../../assets/images/COD.png';
 import { toast } from 'react-toastify';
 import { getUser } from '../../utils/helpers';
 import axios from 'axios';
+import CancelOrderModal from '../../components/Order/CancelOrderModal';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -29,27 +30,46 @@ const OrderDetails = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { order } = location.state;
+    const [openCancelOrderModal, setOpenCancelOrderModal] = useState(false);
 
-    const cancelOrder = async () => {
-        try {
-            const token = await sessionStorage.getItem('token');
-            if (token) {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${JSON.parse(token)}`,
-                    }
-                }
+    const handleOpenCancelOrderModal = () => setOpenCancelOrderModal(true);
+    const handleCloseCancelOrderModal = () => setOpenCancelOrderModal(false);
 
-                const response = await axios.post('http://localhost:6002/api/orders/cancel', { orderId: order._id }, config);
-                toast.success(response.data.message);
-                navigate(`/order-page/${user._id}`);
-            } else {
-                toast.error('You must be logged in to cancel your order');
-            }
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
-    }
+    // const cancelOrder = async () => {
+    //     try {
+    //         const token = await sessionStorage.getItem('token');
+    //         if (token) {
+    //             const config = {
+    //                 headers: {
+    //                     Authorization: `Bearer ${JSON.parse(token)}`,
+    //                 }
+    //             }
+
+
+    //             if (order.paymentStatus === 'Paid' && order.paymentMethod === 'gcash') {
+    //                 const refundPayment = await axios.post(`${process.env.REACT_APP_PAYMONGO_URL}/refunds`, {
+    //                     data: {
+    //                         attributes: {
+    //                             amount: order.subTotal * 100,
+    //                             notes: 'asdasdasd',
+    //                             payment_id: 'pay_5evKTjkzcGzurgGNPLbu5PBk',
+    //                             reason: 'requested_by_customer '
+    //                         }
+    //                     }
+    //                 });
+    //             }
+
+    //             const response = await axios.post('http://localhost:6002/api/orders/cancel', { orderId: order._id }, config);
+    //             toast.success(response.data.message);
+    //             navigate(`/order-page/${user._id}`);
+    //         } else {
+    //             toast.error('You must be logged in to cancel your order');
+    //         }
+    //     } catch (error) {
+    //         toast.error(error.response.data.message);
+    //     }
+    // }
+
     console.log(order.paymentMethod, order.paymentStatus)
     return (
         <Container maxWidth='lg'>
@@ -126,7 +146,7 @@ const OrderDetails = () => {
                                             )}
                                         </>
                                     )}
-                                    
+
                                 </Box>
                                 <Typography sx={{ fontFamily: 'regular', fontSize: 16 }}>₱ {item.totalPrice.toFixed(2)}</Typography>
                             </Box>
@@ -208,7 +228,7 @@ const OrderDetails = () => {
                                 <Typography sx={{ fontFamily: 'regular', color: COLORS.gray, fontSize: 14, mt: 2 }}>
                                     Your order is pending. Please wait for the restaurant to confirm your order.
                                 </Typography>
-                                <Button onClick={cancelOrder} fullWidth sx={{ mt: 2, bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', borderRadius: 8 }}>
+                                <Button onClick={handleOpenCancelOrderModal} fullWidth sx={{ mt: 2, bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', borderRadius: 8 }}>
                                     {'C A N C E L   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
                                 </Button>
                             </>
@@ -222,6 +242,7 @@ const OrderDetails = () => {
                     </Box>
                 </Grid2>
             </Grid2 >
+            <CancelOrderModal open={openCancelOrderModal} onClose={handleCloseCancelOrderModal} order={order} />
         </Container >
     )
 }
