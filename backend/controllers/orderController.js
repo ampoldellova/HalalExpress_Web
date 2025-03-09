@@ -88,6 +88,10 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Order is already cancelled' });
             }
 
+            if (order.paymentStatus === 'Paid') {
+                order.paymentStatus = 'Refunded';
+            }
+
             order.orderStatus = 'cancelled by customer';
             await order.save();
 

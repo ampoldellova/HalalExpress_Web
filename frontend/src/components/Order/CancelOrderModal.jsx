@@ -1,7 +1,10 @@
 import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getUser } from '../../utils/helpers';
+import { createRefund, retrieveRefund } from '../../hook/paymongoService';
 
 const COLORS = {
     primary: "#30b9b2",
@@ -20,47 +23,54 @@ const COLORS = {
 };
 
 const CancelOrderModal = ({ open, onClose, order }) => {
+    const user = getUser();
+    const navigate = useNavigate();
     const [notes, setNotes] = React.useState('');
+    const [notesError, setNotesError] = React.useState(false);
 
-    // const cancelOrder = async () => {
-    //     try {
-    //         const token = await sessionStorage.getItem('token');
-    //         if (token) {
-    //             const config = {
-    //                 headers: {
-    //                     Authorization: `Bearer ${JSON.parse(token)}`,
-    //                 }
-    //             }
+    const cancelOrder = async () => {
+        if (!notes) {
+            setNotesError(true);
+        } else {
+            try {
+                const token = await sessionStorage.getItem('token');
+                if (token) {
+                    const config = {
+                        headers: {
+                            Authorization: `Bearer ${JSON.parse(token)}`,
+                        }
+                    }
 
 
-    //             if (order.paymentStatus === 'Paid' && order.paymentMethod === 'gcash') {
-    //                 const refundPayment = await axios.post(`${process.env.REACT_APP_PAYMONGO_URL}/refunds`, {
-    //                     data: {
-    //                         attributes: {
-    //                             amount: order.subTotal * 100,
-    //                             notes: 'asdasdasd',
-    //                             payment_id: order.paymentId,
-    //                             reason: 'requested_by_customer'
-    //                         }
-    //                     }
-    //                 });
-    //             }
+                    if (order.paymentStatus === 'Paid' && order.paymentMethod === 'gcash') {
+                        const amount = order.subTotal * 100;
+                        const paymentId = order.paymentId;
+                        const refundPayment = await createRefund(amount, notes, paymentId);
+                        console.log(refundPayment);
+                        if (refundPayment.data.attributes.status === 'pending') {
+                            await axios.post('http://localhost:6002/api/orders/cancel', { orderId: order._id }, config);
+                            onClose();
+                            navigate(`/order-page/${user._id}`);
+                            toast.success('Order cancelled successfully');
+                        } else {
+                            throw new Error('Failed to process refund');
+                        }
+                    }
 
-    //             const response = await axios.post('http://localhost:6002/api/orders/cancel', { orderId: order._id }, config);
-    //             toast.success(response.data.message);
-    //             navigate(`/order-page/${user._id}`);
-    //         } else {
-    //             toast.error('You must be logged in to cancel your order');
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.response.data.message);
-    //     }
-    // }
+                } else {
+                    toast.error('You must be logged in to cancel your order');
+                }
+            } catch (error) {
+                toast.error(error.response.data.message);
+            }
+        }
+
+    }
 
     return (
         <Modal
             open={open}
-            onClose={() => { onClose(); setNotes('') }}
+            onClose={() => { onClose(); setNotes(''); setNotesError(false); }}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
@@ -78,7 +88,7 @@ const CancelOrderModal = ({ open, onClose, order }) => {
                     rows={4}
                     placeholder='Add your note here...'
                     value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    onChange={(e) => { setNotes(e.target.value); setNotesError(false); }}
                     InputProps={{
                         sx: {
                             fontFamily: 'regular',
@@ -106,8 +116,9 @@ const CancelOrderModal = ({ open, onClose, order }) => {
                         },
                     }}
                 />
+                {notesError && <Typography sx={{ fontFamily: 'regular', fontSize: 14, color: COLORS.red, mt: 1 }}>*Please provide a note for cancellation</Typography>}
 
-                <Button onClick={() => { }} fullWidth sx={{ mt: 2, bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', borderRadius: 8 }}>
+                <Button onClick={cancelOrder} fullWidth sx={{ mt: 2, bgcolor: COLORS.primary, color: COLORS.white, textTransform: 'none', fontFamily: 'bold', borderRadius: 8 }}>
                     {'C A N C E L   O R D E R'.split(' ').join('\u00A0\u00A0\u00A0')}
                 </Button>
             </Box>

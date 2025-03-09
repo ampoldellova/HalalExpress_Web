@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const PAYMONGO_API_URL = 'https://api.paymongo.com/v1';
+const PAYMONGO_URL = 'https://api.paymongo.com';
 
 const createPaymentIntent = async (amount, currency = 'PHP') => {
     const response = await axios.post(
@@ -85,6 +86,47 @@ const retrievePaymentIntent = async (paymentIntentId) => {
         });
 
     return response.data;
+};
+
+const createRefund = async (amount, notes, paymentId) => {
+    try {
+        const response = await axios.post(
+            `${PAYMONGO_URL}/refunds`,
+            {
+                data: {
+                    attributes: {
+                        amount: amount,
+                        notes: notes,
+                        payment_id: paymentId,
+                        reason: 'requested_by_customer',
+                    },
+                },
+            },
+            {
+                headers: {
+                    Authorization: `Basic ${btoa(process.env.REACT_APP_PAYMONGO_SECRET_KEY)}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-export { createPaymentIntent, attachPaymentMethod, createPaymentMethod, retrievePaymentIntent };
+const retrieveRefund = async (refundId) => {
+    const response = await axios.get(
+        `${PAYMONGO_URL}/refunds/${refundId}`,
+        {
+            headers: {
+                Authorization: `Basic ${btoa(process.env.REACT_APP_PAYMONGO_SECRET_KEY)}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+    return response.data;
+};
+
+export { createPaymentIntent, attachPaymentMethod, createPaymentMethod, retrievePaymentIntent, createRefund, retrieveRefund };
