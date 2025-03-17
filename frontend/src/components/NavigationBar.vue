@@ -10,6 +10,7 @@ import logo from "../assets/icon.png";
       display: flex;
       align-items: center;
       width: 100%;
+      align-self: start;
     "
   >
     <div style="display: flex">
