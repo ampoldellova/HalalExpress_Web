@@ -67,6 +67,23 @@ const CancelOrderModal = ({ open, onClose, order }) => {
               "You cannot cancel this order as it is not in a cancellable state"
             );
           }
+        } else if (
+          order.paymentStatus === "Pending" &&
+          order.orderStatus === "Pending"
+        ) {
+          const config = {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(token)}`,
+            },
+          };
+          await axios.post(
+            "http://localhost:6003/api/orders/cancel",
+            { orderId: order._id },
+            config
+          );
+          onClose();
+          navigate(`/order-page/${user._id}`);
+          toast.success("Order cancelled successfully");
         } else {
           toast.error("You must be logged in to cancel your order");
         }
