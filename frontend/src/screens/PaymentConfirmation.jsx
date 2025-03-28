@@ -32,14 +32,14 @@ const PaymentConfirmation = () => {
                 }
 
                 if (user.userType === 'Vendor') {
-                    const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, parsedData, config);
+                    const response = await axios.post(`http://localhost:6003/api/vendor/orders/check-out`, parsedData, config);
                     if (response.status === 200) {
                         navigate(`/order-page/${user._id}`)
                         toast.success('Order placed successfully');
 
                     }
                 } else {
-                    const response = await axios.post(`http://localhost:6002/api/orders/check-out`, parsedData, config);
+                    const response = await axios.post(`http://localhost:6003/api/orders/check-out`, parsedData, config);
                     if (response.status === 200) {
                         navigate(`/order-page/${user._id}`)
                         toast.success('Order placed successfully');

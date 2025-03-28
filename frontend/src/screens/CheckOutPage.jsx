@@ -67,7 +67,7 @@ const CheckOutPage = () => {
         if (cart?.cartItems.length > 0) {
             const restaurantId = cart.cartItems[0].foodId.restaurant;
             try {
-                const response = await axios.get(`http://localhost:6002/api/restaurant/byId/${restaurantId}`);
+                const response = await axios.get(`http://localhost:6003/api/restaurant/byId/${restaurantId}`);
                 setRestaurant(response.data.data);
             } catch (error) {
                 console.error('Error fetching restaurant data:', error);
@@ -79,7 +79,7 @@ const CheckOutPage = () => {
         if (vendorCart?.cartItems.length > 0) {
             const supplierId = vendorCart.cartItems[0].productId.supplier;
             try {
-                const response = await axios.get(`http://localhost:6002/api/supplier/byId/${supplierId}`);
+                const response = await axios.get(`http://localhost:6003/api/supplier/byId/${supplierId}`);
                 setSupplier(response.data.data);
             } catch (error) {
                 console.error('Error fetching supplier data:', error);
@@ -97,7 +97,7 @@ const CheckOutPage = () => {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/users/address/list`, config);
+                const response = await axios.get(`http://localhost:6003/api/users/address/list`, config);
                 setAddresses(response.data.addresses);
                 if (response.data.addresses.length > 0) {
                     setSelectedAddress(response.data.addresses[0]);
@@ -130,7 +130,7 @@ const CheckOutPage = () => {
             formData.append('email', email);
             formData.append('phone', phone);
 
-            const response = await axios.put(`http://localhost:6002/api/users/`, formData, {
+            const response = await axios.put(`http://localhost:6003/api/users/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${JSON.parse(token)}`,
@@ -225,7 +225,7 @@ const CheckOutPage = () => {
                     };
 
                     if (user.userType === 'Vendor') {
-                        const response = await axios.post(`http://localhost:6002/api/vendor/orders/check-out`, data, config);
+                        const response = await axios.post(`http://localhost:6003/api/vendor/orders/check-out`, data, config);
                         if (response.status === 200) {
                             toast.success('Order placed successfully');
                             navigate(`/order-page/${user._id}`);
@@ -235,7 +235,7 @@ const CheckOutPage = () => {
                             setLoading(false);
                         }
                     } else {
-                        const response = await axios.post(`http://localhost:6002/api/orders/check-out`, data, config);
+                        const response = await axios.post(`http://localhost:6003/api/orders/check-out`, data, config);
                         if (response.status === 200) {
                             toast.success('Order placed successfully');
                             navigate(`/order-page/${user._id}`);

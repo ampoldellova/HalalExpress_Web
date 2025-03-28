@@ -78,7 +78,7 @@ const Profile = () => {
             formData.append('email', email);
             formData.append('phone', phone);
 
-            const response = await axios.put(`http://localhost:6002/api/users/`, formData, {
+            const response = await axios.put(`http://localhost:6003/api/users/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${JSON.parse(token)}`,

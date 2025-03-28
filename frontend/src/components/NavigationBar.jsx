@@ -69,7 +69,7 @@ export default function NavigationBar() {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/cart/`, config)
+                const response = await axios.get(`http://localhost:6003/api/cart/`, config)
                 setCart(response.data.cart)
             } else {
                 console.log('No token found')
@@ -89,7 +89,7 @@ export default function NavigationBar() {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/cart/vendor/`, config)
+                const response = await axios.get(`http://localhost:6003/api/cart/vendor/`, config)
                 setVendorCartItems(response.data.cartItems)
             } else {
                 console.log('No token found')

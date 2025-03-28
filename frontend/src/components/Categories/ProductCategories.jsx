@@ -24,7 +24,7 @@ const ProductCategories = ({ setSelectedCategory, setSelectedSection, setSelecte
 
     const getProductCategories = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/supplyCategory/`);
+            const response = await axios.get(`http://localhost:6003/api/supplyCategory/`);
             setProductCategories(response.data)
         } catch (error) {
             console.log("Error fetching restaurants:", error);

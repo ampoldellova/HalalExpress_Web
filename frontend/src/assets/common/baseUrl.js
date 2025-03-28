@@ -4,8 +4,8 @@ let baseUrl = "";
 
 {
     Platform.OS == "android"
-        ? (baseUrl = "http://localhost:6002")
-        : (baseUrl = "http://localhost:6002");
+        ? (baseUrl = "http://localhost:6003")
+        : (baseUrl = "http://localhost:6003");
 
 }
 

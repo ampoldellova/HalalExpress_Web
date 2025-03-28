@@ -59,7 +59,7 @@ const HomePage = () => {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/supplier/list`, config);
+                const response = await axios.get(`http://localhost:6003/api/supplier/list`, config);
                 setSuppliers(response.data);
                 setSuppliersLoaded(true);
             } else {
@@ -72,7 +72,7 @@ const HomePage = () => {
 
     const getRestaurants = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/restaurant/list`);
+            const response = await axios.get(`http://localhost:6003/api/restaurant/list`);
             setRestaurants(response.data);
             setFoodsLoaded(true);
         } catch (error) {
@@ -82,7 +82,7 @@ const HomePage = () => {
 
     const getFoods = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/foods/list`);
+            const response = await axios.get(`http://localhost:6003/api/foods/list`);
             setFoods(response.data);
             setRestaurantsLoaded(true);
         } catch (error) {
@@ -100,7 +100,7 @@ const HomePage = () => {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/ingredients/list`, config);
+                const response = await axios.get(`http://localhost:6003/api/ingredients/list`, config);
                 setProducts(response.data);
                 setProductsLoaded(true);
             } else {

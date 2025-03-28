@@ -31,7 +31,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
 
     const getFood = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/foods/${foodId}`);
+            const response = await axios.get(`http://localhost:6003/api/foods/${foodId}`);
             setFood(response.data);
         } catch (error) {
             console.log("Error fetching food:", error);
@@ -74,7 +74,7 @@ const RestaurantFoodModal = ({ open, onClose, foodId }) => {
                         Authorization: `Bearer ${JSON.parse(token)}`,
                     }
                 }
-                await axios.post(`http://localhost:6002/api/cart/`, cartItem, config);
+                await axios.post(`http://localhost:6003/api/cart/`, cartItem, config);
                 setAdditives([]);
                 setPreference('');
                 setCount(1);

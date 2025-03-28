@@ -46,7 +46,7 @@ const CartDrawer = ({ onClick }) => {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/cart/`, config)
+                const response = await axios.get(`http://localhost:6003/api/cart/`, config)
                 setCartItems(response.data.cartItems)
                 setCart(response.data.cart)
             } else {
@@ -67,7 +67,7 @@ const CartDrawer = ({ onClick }) => {
                     }
                 }
 
-                const response = await axios.get(`http://localhost:6002/api/cart/vendor/`, config)
+                const response = await axios.get(`http://localhost:6003/api/cart/vendor/`, config)
                 setVendorCartItems(response.data.cartItems)
                 setVendorCart(response.data.vendorCart)
             } else {
@@ -82,7 +82,7 @@ const CartDrawer = ({ onClick }) => {
         try {
             const token = await sessionStorage.getItem('token');
             if (token) {
-                await axios.delete(`http://localhost:6002/api/cart/remove-food?userId=${user._id}&foodId=${foodId}`, {
+                await axios.delete(`http://localhost:6003/api/cart/remove-food?userId=${user._id}&foodId=${foodId}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${JSON.parse(token)}`,
@@ -103,7 +103,7 @@ const CartDrawer = ({ onClick }) => {
         try {
             const token = await sessionStorage.getItem('token');
             if (token) {
-                await axios.delete(`http://localhost:6002/api/cart/vendor/remove-product?userId=${user._id}&productId=${productId}`, {
+                await axios.delete(`http://localhost:6003/api/cart/vendor/remove-product?userId=${user._id}&productId=${productId}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${JSON.parse(token)}`,
@@ -130,7 +130,7 @@ const CartDrawer = ({ onClick }) => {
                     }
                 }
 
-                await axios.patch(`http://localhost:6002/api/cart/increment/${foodId}`, {}, config);
+                await axios.patch(`http://localhost:6003/api/cart/increment/${foodId}`, {}, config);
                 toast.success('Item quantity incremented');
                 getCartItems();
             } else {
@@ -152,7 +152,7 @@ const CartDrawer = ({ onClick }) => {
                     }
                 }
 
-                await axios.patch(`http://localhost:6002/api/cart/vendor/increment/${productId}`, {}, config);
+                await axios.patch(`http://localhost:6003/api/cart/vendor/increment/${productId}`, {}, config);
                 toast.success('Product quantity incremented');
                 getVendorCartItems();
             } else {
@@ -174,7 +174,7 @@ const CartDrawer = ({ onClick }) => {
                     }
                 }
 
-                await axios.patch(`http://localhost:6002/api/cart/decrement/${foodId}`, {}, config);
+                await axios.patch(`http://localhost:6003/api/cart/decrement/${foodId}`, {}, config);
                 toast.success('Item quantity decremented');
                 getCartItems();
             } else {
@@ -196,7 +196,7 @@ const CartDrawer = ({ onClick }) => {
                     }
                 }
 
-                await axios.patch(`http://localhost:6002/api/cart/vendor/decrement/${productId}`, {}, config);
+                await axios.patch(`http://localhost:6003/api/cart/vendor/decrement/${productId}`, {}, config);
                 toast.success('Product quantity decremented');
                 getVendorCartItems();
             } else {

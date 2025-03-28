@@ -36,7 +36,7 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
                 }
             }
 
-            const response = await axios.get(`http://localhost:6002/api/ingredients/${productId}`, config);
+            const response = await axios.get(`http://localhost:6003/api/ingredients/${productId}`, config);
             setProduct(response.data);
         } catch (error) {
             console.log("Error fetching product:", error);
@@ -60,7 +60,7 @@ const SupplierProductModal = ({ open, onClose, productId }) => {
                 }
             }
 
-            const response = await axios.post('http://localhost:6002/api/cart/vendor/', cartItem, config);
+            const response = await axios.post('http://localhost:6003/api/cart/vendor/', cartItem, config);
             setCount(1);
             setPreference('');
             onClose();

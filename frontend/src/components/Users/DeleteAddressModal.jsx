@@ -48,7 +48,7 @@ const DeleteAddressModal = ({ address, fetchUserAddresses }) => {
                     }
                 }
 
-                await axios.delete(`http://localhost:6002/api/users/address/${address._id}`, config);
+                await axios.delete(`http://localhost:6003/api/users/address/${address._id}`, config);
                 toast.success('Address deleted successfully');
                 fetchUserAddresses();
             } else {

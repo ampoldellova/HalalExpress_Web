@@ -29,7 +29,7 @@ const SupplierProducts = ({ supplierId }) => {
 
     const fetchSupplierProducts = async () => {
         try {
-            const response = await axios.patch(`http://localhost:6002/api/ingredients/supplier/${supplierId}`, {});
+            const response = await axios.patch(`http://localhost:6003/api/ingredients/supplier/${supplierId}`, {});
             setProducts(response.data);
         } catch (error) {
             console.log("Error fetching products:", error);

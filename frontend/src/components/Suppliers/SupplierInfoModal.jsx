@@ -27,7 +27,7 @@ const SupplierInfoModal = ({ open, onClose, supplierId }) => {
 
     const getSupplier = async () => {
         try {
-            const response = await axios.get(`http://localhost:6002/api/supplier/byId/${supplierId}`);
+            const response = await axios.get(`http://localhost:6003/api/supplier/byId/${supplierId}`);
             setSupplier(response.data.data);
         } catch (error) {
             console.log("Error fetching supplier:", error);
