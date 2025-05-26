@@ -38,7 +38,7 @@ const OrderPage = () => {
         };
 
         const response = await axios.get(
-          "http://localhost:6003/api/orders/",
+          "http://localhost:6002/api/orders/",
           config
         );
         setOrders(response.data.orders);
@@ -61,7 +61,7 @@ const OrderPage = () => {
         };
 
         const response = await axios.get(
-          "http://localhost:6003/api/vendor/orders/",
+          "http://localhost:6002/api/vendor/orders/",
           config
         );
         setVendorOrders(response.data.vendorOrders);

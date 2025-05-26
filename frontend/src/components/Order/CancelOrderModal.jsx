@@ -52,7 +52,7 @@ const CancelOrderModal = ({ open, onClose, order }) => {
             console.log(refundPayment);
             if (refundPayment.data.attributes.status === "pending") {
               await axios.post(
-                "http://localhost:6003/api/orders/cancel",
+                "http://localhost:6002/api/orders/cancel",
                 { orderId: order._id },
                 config
               );
@@ -77,7 +77,7 @@ const CancelOrderModal = ({ open, onClose, order }) => {
             },
           };
           await axios.post(
-            "http://localhost:6003/api/orders/cancel",
+            "http://localhost:6002/api/orders/cancel",
             { orderId: order._id },
             config
           );

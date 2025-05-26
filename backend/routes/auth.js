@@ -1,8 +1,8 @@
-const router = require('express').Router();
-const authController = require('../controllers/authController')
-const multer = require('../middleware/multerConfig')
+const router = require("express").Router();
+const authController = require("../controllers/authController");
 
-router.post('/register', multer.single('profile'), authController.createUser)
-router.post('/login', authController.loginUser)
+router.post("/register", authController.createUser);
+router.post("/verify-otp", authController.verifyOtp);
+router.post("/login", authController.loginUser);
 
 module.exports = router;
